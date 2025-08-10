@@ -1,0 +1,3 @@
+[console_scripts]
+sensors = sensors.sensors:main
+

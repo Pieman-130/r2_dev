@@ -1,0 +1,102 @@
+[0.000000] (-) TimerEvent: {}
+[0.001455] (-) JobUnselected: {'identifier': 'bno055'}
+[0.001764] (-) JobUnselected: {'identifier': 'drivetrain'}
+[0.001945] (-) JobUnselected: {'identifier': 'head'}
+[0.002039] (-) JobUnselected: {'identifier': 'sensors'}
+[0.002138] (gps) JobQueued: {'identifier': 'gps', 'dependencies': OrderedDict()}
+[0.002237] (gps) JobStarted: {'identifier': 'gps'}
+[0.097835] (-) TimerEvent: {}
+[0.198442] (-) TimerEvent: {}
+[0.299130] (-) TimerEvent: {}
+[0.399769] (-) TimerEvent: {}
+[0.500428] (-) TimerEvent: {}
+[0.601094] (-) TimerEvent: {}
+[0.701679] (-) TimerEvent: {}
+[0.802325] (-) TimerEvent: {}
+[0.902990] (-) TimerEvent: {}
+[1.003579] (-) TimerEvent: {}
+[1.104157] (-) TimerEvent: {}
+[1.204742] (-) TimerEvent: {}
+[1.305357] (-) TimerEvent: {}
+[1.405969] (-) TimerEvent: {}
+[1.506675] (-) TimerEvent: {}
+[1.607404] (-) TimerEvent: {}
+[1.708202] (-) TimerEvent: {}
+[1.809287] (-) TimerEvent: {}
+[1.910202] (-) TimerEvent: {}
+[2.010861] (-) TimerEvent: {}
+[2.111472] (-) TimerEvent: {}
+[2.212068] (-) TimerEvent: {}
+[2.312708] (-) TimerEvent: {}
+[2.413384] (-) TimerEvent: {}
+[2.513974] (-) TimerEvent: {}
+[2.614578] (-) TimerEvent: {}
+[2.715272] (-) TimerEvent: {}
+[2.815866] (-) TimerEvent: {}
+[2.916471] (-) TimerEvent: {}
+[3.017078] (-) TimerEvent: {}
+[3.117703] (-) TimerEvent: {}
+[3.218339] (-) TimerEvent: {}
+[3.318976] (-) TimerEvent: {}
+[3.419686] (-) TimerEvent: {}
+[3.520372] (-) TimerEvent: {}
+[3.621149] (-) TimerEvent: {}
+[3.721971] (-) TimerEvent: {}
+[3.805648] (gps) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/gps', 'build', '--build-base', '/home/adam/r2_motion/build/gps/build', 'install', '--record', '/home/adam/r2_motion/build/gps/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/adam/r2_motion/src/gps', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'adam', 'SSH_CLIENT': '192.168.50.54 64607 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python_examples/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastcdr/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/adam', 'OLDPWD': '/home/adam/r2_motion/src', 'SSH_TTY': '/dev/pts/0', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'LC_TERMINAL_VERSION': '3.5.11', 'COLCON_PREFIX_PATH': '/home/adam/gps_test/install:/home/adam/r2_motion/install:/home/adam/scout/install:/home/adam/fastdds_testing/fastdds_python_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'adam', '_': '/home/adam/.local/bin/colcon', 'ROS_VERSION': '2', 'PKG_CONFIG_PATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/lib/aarch64-linux-gnu/pkgconfig:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/lib/pkgconfig', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '2', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/adam/.local/bin:/home/adam/bin:/opt/ros/humble/bin:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds/bin:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/home/adam/gps_test/install/nmea_navsat_driver:/home/adam/r2_motion/install/sensors:/home/adam/r2_motion/install/head:/home/adam/r2_motion/install/drivetrain:/home/adam/r2_motion/install/bno055:/home/adam/scout/install/sensor:/home/adam/scout/install/navigator:/home/adam/scout/install/commander:/home/adam/scout/install/captain:/home/adam/scout/install/boat:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_TERMINAL': 'iTerm2', 'CLASSPATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/fastddsgen/share/fastddsgen/java:/home/adam/fastdds_testing/fastdds_python_ws/install/fastddsgen/share/fastddsgen/java/*', 'PWD': '/home/adam/r2_motion/build/gps', 'SSH_CONNECTION': '192.168.50.54 64607 192.168.50.215 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/adam/r2_motion/build/gps/prefix_override:/home/adam/r2_motion/install/gps/lib/python3.10/site-packages:/home/adam/gps_test/install/nmea_navsat_driver/lib/python3.10/site-packages:/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages:/home/adam/r2_motion/install/head/lib/python3.10/site-packages:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:/home/adam/r2_motion/install/bno055/lib/python3.10/site-packages:/home/adam/scout/install/sensor/lib/python3.10/site-packages:/home/adam/scout/install/navigator/lib/python3.10/site-packages:/home/adam/scout/install/commander/lib/python3.10/site-packages:/home/adam/scout/install/captain/lib/python3.10/site-packages:/home/adam/scout/install/boat/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python_examples/lib/python3.10/site-packages:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python/lib/python3.10/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python:/home/adam/fastdds_testing/fastdds_python_ws/install/fastcdr'}, 'shell': False}
+[3.822120] (-) TimerEvent: {}
+[3.924302] (-) TimerEvent: {}
+[4.024900] (-) TimerEvent: {}
+[4.125538] (-) TimerEvent: {}
+[4.226173] (-) TimerEvent: {}
+[4.326958] (-) TimerEvent: {}
+[4.427625] (-) TimerEvent: {}
+[4.528257] (-) TimerEvent: {}
+[4.628938] (-) TimerEvent: {}
+[4.729554] (-) TimerEvent: {}
+[4.830172] (-) TimerEvent: {}
+[4.930842] (-) TimerEvent: {}
+[5.031463] (-) TimerEvent: {}
+[5.132114] (-) TimerEvent: {}
+[5.232745] (-) TimerEvent: {}
+[5.333364] (-) TimerEvent: {}
+[5.388060] (gps) StdoutLine: {'line': b'running egg_info\n'}
+[5.390422] (gps) StdoutLine: {'line': b'creating ../../build/gps/gps.egg-info\n'}
+[5.391694] (gps) StdoutLine: {'line': b'writing ../../build/gps/gps.egg-info/PKG-INFO\n'}
+[5.392796] (gps) StdoutLine: {'line': b'writing dependency_links to ../../build/gps/gps.egg-info/dependency_links.txt\n'}
+[5.393417] (gps) StdoutLine: {'line': b'writing entry points to ../../build/gps/gps.egg-info/entry_points.txt\n'}
+[5.394005] (gps) StdoutLine: {'line': b'writing requirements to ../../build/gps/gps.egg-info/requires.txt\n'}
+[5.394614] (gps) StdoutLine: {'line': b'writing top-level names to ../../build/gps/gps.egg-info/top_level.txt\n'}
+[5.395486] (gps) StdoutLine: {'line': b"writing manifest file '../../build/gps/gps.egg-info/SOURCES.txt'\n"}
+[5.403428] (gps) StdoutLine: {'line': b"reading manifest file '../../build/gps/gps.egg-info/SOURCES.txt'\n"}
+[5.406677] (gps) StdoutLine: {'line': b"writing manifest file '../../build/gps/gps.egg-info/SOURCES.txt'\n"}
+[5.407370] (gps) StdoutLine: {'line': b'running build\n'}
+[5.407883] (gps) StdoutLine: {'line': b'running build_py\n'}
+[5.408352] (gps) StdoutLine: {'line': b'creating /home/adam/r2_motion/build/gps/build\n'}
+[5.408964] (gps) StdoutLine: {'line': b'creating /home/adam/r2_motion/build/gps/build/lib\n'}
+[5.409468] (gps) StdoutLine: {'line': b'creating /home/adam/r2_motion/build/gps/build/lib/gps\n'}
+[5.409924] (gps) StdoutLine: {'line': b'copying gps/gps.py -> /home/adam/r2_motion/build/gps/build/lib/gps\n'}
+[5.410328] (gps) StdoutLine: {'line': b'copying gps/__init__.py -> /home/adam/r2_motion/build/gps/build/lib/gps\n'}
+[5.410900] (gps) StdoutLine: {'line': b'running install\n'}
+[5.412292] (gps) StdoutLine: {'line': b'running install_lib\n'}
+[5.416531] (gps) StdoutLine: {'line': b'creating /home/adam/r2_motion/install/gps/lib/python3.10/site-packages/gps\n'}
+[5.417139] (gps) StdoutLine: {'line': b'copying /home/adam/r2_motion/build/gps/build/lib/gps/gps.py -> /home/adam/r2_motion/install/gps/lib/python3.10/site-packages/gps\n'}
+[5.417748] (gps) StdoutLine: {'line': b'copying /home/adam/r2_motion/build/gps/build/lib/gps/__init__.py -> /home/adam/r2_motion/install/gps/lib/python3.10/site-packages/gps\n'}
+[5.420994] (gps) StdoutLine: {'line': b'byte-compiling /home/adam/r2_motion/install/gps/lib/python3.10/site-packages/gps/gps.py to gps.cpython-310.pyc\n'}
+[5.424827] (gps) StdoutLine: {'line': b'byte-compiling /home/adam/r2_motion/install/gps/lib/python3.10/site-packages/gps/__init__.py to __init__.cpython-310.pyc\n'}
+[5.425829] (gps) StdoutLine: {'line': b'running install_data\n'}
+[5.426567] (gps) StdoutLine: {'line': b'creating /home/adam/r2_motion/install/gps/share/ament_index\n'}
+[5.427278] (gps) StdoutLine: {'line': b'creating /home/adam/r2_motion/install/gps/share/ament_index/resource_index\n'}
+[5.427786] (gps) StdoutLine: {'line': b'creating /home/adam/r2_motion/install/gps/share/ament_index/resource_index/packages\n'}
+[5.428266] (gps) StdoutLine: {'line': b'copying resource/gps -> /home/adam/r2_motion/install/gps/share/ament_index/resource_index/packages\n'}
+[5.428835] (gps) StdoutLine: {'line': b'copying package.xml -> /home/adam/r2_motion/install/gps/share/gps\n'}
+[5.429204] (gps) StdoutLine: {'line': b'running install_egg_info\n'}
+[5.433517] (-) TimerEvent: {}
+[5.437729] (gps) StdoutLine: {'line': b'Copying ../../build/gps/gps.egg-info to /home/adam/r2_motion/install/gps/lib/python3.10/site-packages/gps-0.0.0-py3.10.egg-info\n'}
+[5.443259] (gps) StdoutLine: {'line': b'running install_scripts\n'}
+[5.533677] (-) TimerEvent: {}
+[5.539700] (gps) StdoutLine: {'line': b'Installing gps script to /home/adam/r2_motion/install/gps/lib/gps\n'}
+[5.541251] (gps) StdoutLine: {'line': b"writing list of installed files to '/home/adam/r2_motion/build/gps/install.log'\n"}
+[5.634033] (-) TimerEvent: {}
+[5.663764] (gps) CommandEnded: {'returncode': 0}
+[5.712664] (gps) JobEnded: {'identifier': 'gps', 'rc': 0}
+[5.715284] (-) EventReactorShutdown: {}

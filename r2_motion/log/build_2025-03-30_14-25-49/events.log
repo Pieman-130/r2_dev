@@ -1,0 +1,104 @@
+[0.000000] (-) TimerEvent: {}
+[0.001150] (drivetrain) JobQueued: {'identifier': 'drivetrain', 'dependencies': OrderedDict()}
+[0.002494] (drivetrain) JobStarted: {'identifier': 'drivetrain'}
+[0.099058] (-) TimerEvent: {}
+[0.199782] (-) TimerEvent: {}
+[0.300468] (-) TimerEvent: {}
+[0.401154] (-) TimerEvent: {}
+[0.501835] (-) TimerEvent: {}
+[0.603353] (-) TimerEvent: {}
+[0.704839] (-) TimerEvent: {}
+[0.805510] (-) TimerEvent: {}
+[0.906315] (-) TimerEvent: {}
+[1.006984] (-) TimerEvent: {}
+[1.107838] (-) TimerEvent: {}
+[1.208682] (-) TimerEvent: {}
+[1.309385] (-) TimerEvent: {}
+[1.410162] (-) TimerEvent: {}
+[1.510871] (-) TimerEvent: {}
+[1.611680] (-) TimerEvent: {}
+[1.712353] (-) TimerEvent: {}
+[1.813101] (-) TimerEvent: {}
+[1.914002] (-) TimerEvent: {}
+[2.014741] (-) TimerEvent: {}
+[2.116178] (-) TimerEvent: {}
+[2.217617] (-) TimerEvent: {}
+[2.318325] (-) TimerEvent: {}
+[2.418971] (-) TimerEvent: {}
+[2.519602] (-) TimerEvent: {}
+[2.620855] (-) TimerEvent: {}
+[2.721541] (-) TimerEvent: {}
+[2.822178] (-) TimerEvent: {}
+[2.923572] (-) TimerEvent: {}
+[3.024269] (-) TimerEvent: {}
+[3.124909] (-) TimerEvent: {}
+[3.225567] (-) TimerEvent: {}
+[3.326222] (-) TimerEvent: {}
+[3.426855] (-) TimerEvent: {}
+[3.527483] (-) TimerEvent: {}
+[3.628159] (-) TimerEvent: {}
+[3.728887] (-) TimerEvent: {}
+[3.829502] (-) TimerEvent: {}
+[3.930184] (-) TimerEvent: {}
+[4.030873] (-) TimerEvent: {}
+[4.131494] (-) TimerEvent: {}
+[4.232145] (-) TimerEvent: {}
+[4.333007] (-) TimerEvent: {}
+[4.372641] (drivetrain) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/drivetrain', 'build', '--build-base', '/home/adam/r2_motion/build/drivetrain/build', 'install', '--record', '/home/adam/r2_motion/build/drivetrain/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/adam/r2_motion/src/drivetrain', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'adam', 'SSH_CLIENT': '192.168.50.54 59937 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python_examples/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastcdr/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/adam', 'OLDPWD': '/home/adam/r2_motion/src', 'SSH_TTY': '/dev/pts/4', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'LC_TERMINAL_VERSION': '3.5.11', 'COLCON_PREFIX_PATH': '/home/adam/scout/install:/home/adam/fastdds_testing/fastdds_python_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'adam', '_': '/home/adam/.local/bin/colcon', 'ROS_VERSION': '2', 'PKG_CONFIG_PATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/lib/aarch64-linux-gnu/pkgconfig:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/lib/pkgconfig', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '4', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/adam/.local/bin:/opt/ros/humble/bin:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds/bin:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/home/adam/scout/install/sensor:/home/adam/scout/install/navigator:/home/adam/scout/install/commander:/home/adam/scout/install/captain:/home/adam/scout/install/boat:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_TERMINAL': 'iTerm2', 'CLASSPATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/fastddsgen/share/fastddsgen/java:/home/adam/fastdds_testing/fastdds_python_ws/install/fastddsgen/share/fastddsgen/java/*', 'PWD': '/home/adam/r2_motion/build/drivetrain', 'SSH_CONNECTION': '192.168.50.54 59937 192.168.50.215 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/adam/r2_motion/build/drivetrain/prefix_override:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:/home/adam/scout/install/sensor/lib/python3.10/site-packages:/home/adam/scout/install/navigator/lib/python3.10/site-packages:/home/adam/scout/install/commander/lib/python3.10/site-packages:/home/adam/scout/install/captain/lib/python3.10/site-packages:/home/adam/scout/install/boat/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python_examples/lib/python3.10/site-packages:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python/lib/python3.10/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python:/home/adam/fastdds_testing/fastdds_python_ws/install/fastcdr'}, 'shell': False}
+[4.433162] (-) TimerEvent: {}
+[4.533830] (-) TimerEvent: {}
+[4.634487] (-) TimerEvent: {}
+[4.735736] (-) TimerEvent: {}
+[4.836898] (-) TimerEvent: {}
+[4.938090] (-) TimerEvent: {}
+[5.038755] (-) TimerEvent: {}
+[5.139406] (-) TimerEvent: {}
+[5.240112] (-) TimerEvent: {}
+[5.340748] (-) TimerEvent: {}
+[5.441372] (-) TimerEvent: {}
+[5.542043] (-) TimerEvent: {}
+[5.642766] (-) TimerEvent: {}
+[5.743978] (-) TimerEvent: {}
+[5.845133] (-) TimerEvent: {}
+[5.855914] (drivetrain) StdoutLine: {'line': b'running egg_info\n'}
+[5.858293] (drivetrain) StdoutLine: {'line': b'creating ../../build/drivetrain/drivetrain.egg-info\n'}
+[5.859413] (drivetrain) StdoutLine: {'line': b'writing ../../build/drivetrain/drivetrain.egg-info/PKG-INFO\n'}
+[5.860651] (drivetrain) StdoutLine: {'line': b'writing dependency_links to ../../build/drivetrain/drivetrain.egg-info/dependency_links.txt\n'}
+[5.861461] (drivetrain) StdoutLine: {'line': b'writing entry points to ../../build/drivetrain/drivetrain.egg-info/entry_points.txt\n'}
+[5.862290] (drivetrain) StdoutLine: {'line': b'writing requirements to ../../build/drivetrain/drivetrain.egg-info/requires.txt\n'}
+[5.862704] (drivetrain) StdoutLine: {'line': b'writing top-level names to ../../build/drivetrain/drivetrain.egg-info/top_level.txt\n'}
+[5.863341] (drivetrain) StdoutLine: {'line': b"writing manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'\n"}
+[5.871425] (drivetrain) StdoutLine: {'line': b"reading manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'\n"}
+[5.872478] (drivetrain) StdoutLine: {'line': b"adding license file 'LICENSE'\n"}
+[5.874995] (drivetrain) StdoutLine: {'line': b"writing manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'\n"}
+[5.875779] (drivetrain) StdoutLine: {'line': b'running build\n'}
+[5.876242] (drivetrain) StdoutLine: {'line': b'running build_py\n'}
+[5.877112] (drivetrain) StdoutLine: {'line': b'creating /home/adam/r2_motion/build/drivetrain/build\n'}
+[5.877794] (drivetrain) StdoutLine: {'line': b'creating /home/adam/r2_motion/build/drivetrain/build/lib\n'}
+[5.878457] (drivetrain) StdoutLine: {'line': b'creating /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain\n'}
+[5.878869] (drivetrain) StdoutLine: {'line': b'copying drivetrain/hello.py -> /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain\n'}
+[5.879574] (drivetrain) StdoutLine: {'line': b'copying drivetrain/__init__.py -> /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain\n'}
+[5.880057] (drivetrain) StdoutLine: {'line': b'running install\n'}
+[5.880757] (drivetrain) StdoutLine: {'line': b'running install_lib\n'}
+[5.885003] (drivetrain) StdoutLine: {'line': b'creating /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain\n'}
+[5.885755] (drivetrain) StdoutLine: {'line': b'copying /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain/hello.py -> /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain\n'}
+[5.886358] (drivetrain) StdoutLine: {'line': b'copying /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain/__init__.py -> /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain\n'}
+[5.889338] (drivetrain) StdoutLine: {'line': b'byte-compiling /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain/hello.py to hello.cpython-310.pyc\n'}
+[5.890818] (drivetrain) StdoutLine: {'line': b'byte-compiling /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain/__init__.py to __init__.cpython-310.pyc\n'}
+[5.891913] (drivetrain) StdoutLine: {'line': b'running install_data\n'}
+[5.892646] (drivetrain) StdoutLine: {'line': b'creating /home/adam/r2_motion/install/drivetrain/share/ament_index\n'}
+[5.893526] (drivetrain) StdoutLine: {'line': b'creating /home/adam/r2_motion/install/drivetrain/share/ament_index/resource_index\n'}
+[5.894015] (drivetrain) StdoutLine: {'line': b'creating /home/adam/r2_motion/install/drivetrain/share/ament_index/resource_index/packages\n'}
+[5.894715] (drivetrain) StdoutLine: {'line': b'copying resource/drivetrain -> /home/adam/r2_motion/install/drivetrain/share/ament_index/resource_index/packages\n'}
+[5.895095] (drivetrain) StdoutLine: {'line': b'copying package.xml -> /home/adam/r2_motion/install/drivetrain/share/drivetrain\n'}
+[5.895447] (drivetrain) StdoutLine: {'line': b'running install_egg_info\n'}
+[5.902841] (drivetrain) StdoutLine: {'line': b'Copying ../../build/drivetrain/drivetrain.egg-info to /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain-0.0.0-py3.10.egg-info\n'}
+[5.908618] (drivetrain) StdoutLine: {'line': b'running install_scripts\n'}
+[5.945307] (-) TimerEvent: {}
+[6.002174] (drivetrain) StdoutLine: {'line': b"writing list of installed files to '/home/adam/r2_motion/build/drivetrain/install.log'\n"}
+[6.045546] (-) TimerEvent: {}
+[6.118545] (drivetrain) CommandEnded: {'returncode': 0}
+[6.145666] (-) TimerEvent: {}
+[6.247408] (-) TimerEvent: {}
+[6.268719] (drivetrain) JobEnded: {'identifier': 'drivetrain', 'rc': 0}
+[6.271543] (-) EventReactorShutdown: {}

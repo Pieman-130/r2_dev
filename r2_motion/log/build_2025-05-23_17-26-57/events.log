@@ -1,0 +1,132 @@
+[0.000000] (-) TimerEvent: {}
+[0.001453] (drivetrain) JobQueued: {'identifier': 'drivetrain', 'dependencies': OrderedDict()}
+[0.001718] (sensors) JobQueued: {'identifier': 'sensors', 'dependencies': OrderedDict()}
+[0.001907] (drivetrain) JobStarted: {'identifier': 'drivetrain'}
+[0.050811] (sensors) JobStarted: {'identifier': 'sensors'}
+[0.098352] (-) TimerEvent: {}
+[0.199146] (-) TimerEvent: {}
+[0.299782] (-) TimerEvent: {}
+[0.400480] (-) TimerEvent: {}
+[0.501169] (-) TimerEvent: {}
+[0.601981] (-) TimerEvent: {}
+[0.703217] (-) TimerEvent: {}
+[0.804447] (-) TimerEvent: {}
+[0.905135] (-) TimerEvent: {}
+[1.005875] (-) TimerEvent: {}
+[1.106540] (-) TimerEvent: {}
+[1.207184] (-) TimerEvent: {}
+[1.307867] (-) TimerEvent: {}
+[1.408513] (-) TimerEvent: {}
+[1.509171] (-) TimerEvent: {}
+[1.609931] (-) TimerEvent: {}
+[1.718680] (-) TimerEvent: {}
+[1.819605] (-) TimerEvent: {}
+[1.920379] (-) TimerEvent: {}
+[2.021041] (-) TimerEvent: {}
+[2.121780] (-) TimerEvent: {}
+[2.222498] (-) TimerEvent: {}
+[2.323140] (-) TimerEvent: {}
+[2.423763] (-) TimerEvent: {}
+[2.524415] (-) TimerEvent: {}
+[2.625262] (-) TimerEvent: {}
+[2.725954] (-) TimerEvent: {}
+[2.826590] (-) TimerEvent: {}
+[2.927263] (-) TimerEvent: {}
+[3.027928] (-) TimerEvent: {}
+[3.128596] (-) TimerEvent: {}
+[3.229251] (-) TimerEvent: {}
+[3.330067] (-) TimerEvent: {}
+[3.431024] (-) TimerEvent: {}
+[3.532336] (-) TimerEvent: {}
+[3.633210] (-) TimerEvent: {}
+[3.734031] (-) TimerEvent: {}
+[3.835953] (-) TimerEvent: {}
+[3.936852] (-) TimerEvent: {}
+[4.037629] (-) TimerEvent: {}
+[4.138357] (-) TimerEvent: {}
+[4.239079] (-) TimerEvent: {}
+[4.340188] (-) TimerEvent: {}
+[4.441299] (-) TimerEvent: {}
+[4.542367] (-) TimerEvent: {}
+[4.643367] (-) TimerEvent: {}
+[4.744445] (-) TimerEvent: {}
+[4.845139] (-) TimerEvent: {}
+[4.946226] (-) TimerEvent: {}
+[5.047331] (-) TimerEvent: {}
+[5.148386] (-) TimerEvent: {}
+[5.249515] (-) TimerEvent: {}
+[5.350690] (-) TimerEvent: {}
+[5.451448] (-) TimerEvent: {}
+[5.552238] (-) TimerEvent: {}
+[5.653164] (-) TimerEvent: {}
+[5.754992] (-) TimerEvent: {}
+[5.774730] (sensors) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/sensors', 'build', '--build-base', '/home/adam/r2_motion/build/sensors/build', 'install', '--record', '/home/adam/r2_motion/build/sensors/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/adam/r2_motion/src/sensors', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'adam', 'SSH_CLIENT': '192.168.50.54 63173 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python_examples/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastcdr/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/adam', 'OLDPWD': '/home/adam', 'SSH_TTY': '/dev/pts/4', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'LC_TERMINAL_VERSION': '3.5.14', 'COLCON_PREFIX_PATH': '/home/adam/r2_motion/install:/home/adam/scout/install:/home/adam/fastdds_testing/fastdds_python_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'adam', '_': '/home/adam/.local/bin/colcon', 'ROS_VERSION': '2', 'PKG_CONFIG_PATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/lib/aarch64-linux-gnu/pkgconfig:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/lib/pkgconfig', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '26', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/adam/.local/bin:/home/adam/bin:/opt/ros/humble/bin:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds/bin:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/home/adam/r2_motion/install/sensors:/home/adam/r2_motion/install/drivetrain:/home/adam/scout/install/sensor:/home/adam/scout/install/navigator:/home/adam/scout/install/commander:/home/adam/scout/install/captain:/home/adam/scout/install/boat:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_TERMINAL': 'iTerm2', 'CLASSPATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/fastddsgen/share/fastddsgen/java:/home/adam/fastdds_testing/fastdds_python_ws/install/fastddsgen/share/fastddsgen/java/*', 'PWD': '/home/adam/r2_motion/build/sensors', 'SSH_CONNECTION': '192.168.50.54 63173 192.168.50.215 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/adam/r2_motion/build/sensors/prefix_override:/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages:/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:/home/adam/scout/install/sensor/lib/python3.10/site-packages:/home/adam/scout/install/navigator/lib/python3.10/site-packages:/home/adam/scout/install/commander/lib/python3.10/site-packages:/home/adam/scout/install/captain/lib/python3.10/site-packages:/home/adam/scout/install/boat/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python_examples/lib/python3.10/site-packages:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python/lib/python3.10/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python:/home/adam/fastdds_testing/fastdds_python_ws/install/fastcdr'}, 'shell': False}
+[5.798844] (drivetrain) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/drivetrain', 'build', '--build-base', '/home/adam/r2_motion/build/drivetrain/build', 'install', '--record', '/home/adam/r2_motion/build/drivetrain/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/adam/r2_motion/src/drivetrain', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'adam', 'SSH_CLIENT': '192.168.50.54 63173 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python_examples/lib:/home/adam/fastdds_testing/fastdds_python_ws/install/fastcdr/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/adam', 'OLDPWD': '/home/adam', 'SSH_TTY': '/dev/pts/4', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'LC_TERMINAL_VERSION': '3.5.14', 'COLCON_PREFIX_PATH': '/home/adam/r2_motion/install:/home/adam/scout/install:/home/adam/fastdds_testing/fastdds_python_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'adam', '_': '/home/adam/.local/bin/colcon', 'ROS_VERSION': '2', 'PKG_CONFIG_PATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/lib/aarch64-linux-gnu/pkgconfig:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/lib/pkgconfig', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '26', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/adam/.local/bin:/home/adam/bin:/opt/ros/humble/bin:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds/bin:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/home/adam/r2_motion/install/sensors:/home/adam/r2_motion/install/drivetrain:/home/adam/scout/install/sensor:/home/adam/scout/install/navigator:/home/adam/scout/install/commander:/home/adam/scout/install/captain:/home/adam/scout/install/boat:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_TERMINAL': 'iTerm2', 'CLASSPATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/fastddsgen/share/fastddsgen/java:/home/adam/fastdds_testing/fastdds_python_ws/install/fastddsgen/share/fastddsgen/java/*', 'PWD': '/home/adam/r2_motion/build/drivetrain', 'SSH_CONNECTION': '192.168.50.54 63173 192.168.50.215 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/adam/r2_motion/build/drivetrain/prefix_override:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:/home/adam/scout/install/sensor/lib/python3.10/site-packages:/home/adam/scout/install/navigator/lib/python3.10/site-packages:/home/adam/scout/install/commander/lib/python3.10/site-packages:/home/adam/scout/install/captain/lib/python3.10/site-packages:/home/adam/scout/install/boat/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python_examples/lib/python3.10/site-packages:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python/lib/python3.10/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds:/home/adam/fastdds_testing/fastdds_python_ws/install/foonathan_memory_vendor:/home/adam/fastdds_testing/fastdds_python_ws/install/fastdds_python:/home/adam/fastdds_testing/fastdds_python_ws/install/fastcdr'}, 'shell': False}
+[5.855163] (-) TimerEvent: {}
+[5.957233] (-) TimerEvent: {}
+[6.058821] (-) TimerEvent: {}
+[6.160328] (-) TimerEvent: {}
+[6.262042] (-) TimerEvent: {}
+[6.364134] (-) TimerEvent: {}
+[6.465459] (-) TimerEvent: {}
+[6.566861] (-) TimerEvent: {}
+[6.668589] (-) TimerEvent: {}
+[6.770086] (-) TimerEvent: {}
+[6.870804] (-) TimerEvent: {}
+[6.972071] (-) TimerEvent: {}
+[7.073402] (-) TimerEvent: {}
+[7.174619] (-) TimerEvent: {}
+[7.275971] (-) TimerEvent: {}
+[7.377377] (-) TimerEvent: {}
+[7.478697] (-) TimerEvent: {}
+[7.505307] (sensors) StdoutLine: {'line': b'running egg_info\n'}
+[7.508821] (sensors) StdoutLine: {'line': b'writing ../../build/sensors/sensors.egg-info/PKG-INFO\n'}
+[7.510126] (sensors) StdoutLine: {'line': b'writing dependency_links to ../../build/sensors/sensors.egg-info/dependency_links.txt\n'}
+[7.511184] (sensors) StdoutLine: {'line': b'writing entry points to ../../build/sensors/sensors.egg-info/entry_points.txt\n'}
+[7.512017] (sensors) StdoutLine: {'line': b'writing requirements to ../../build/sensors/sensors.egg-info/requires.txt\n'}
+[7.512773] (sensors) StdoutLine: {'line': b'writing top-level names to ../../build/sensors/sensors.egg-info/top_level.txt\n'}
+[7.519593] (drivetrain) StdoutLine: {'line': b'running egg_info\n'}
+[7.523084] (sensors) StdoutLine: {'line': b"reading manifest file '../../build/sensors/sensors.egg-info/SOURCES.txt'\n"}
+[7.523668] (drivetrain) StdoutLine: {'line': b'writing ../../build/drivetrain/drivetrain.egg-info/PKG-INFO\n'}
+[7.524460] (drivetrain) StdoutLine: {'line': b'writing dependency_links to ../../build/drivetrain/drivetrain.egg-info/dependency_links.txt\n'}
+[7.525358] (drivetrain) StdoutLine: {'line': b'writing entry points to ../../build/drivetrain/drivetrain.egg-info/entry_points.txt\n'}
+[7.526436] (drivetrain) StdoutLine: {'line': b'writing requirements to ../../build/drivetrain/drivetrain.egg-info/requires.txt\n'}
+[7.527225] (drivetrain) StdoutLine: {'line': b'writing top-level names to ../../build/drivetrain/drivetrain.egg-info/top_level.txt\n'}
+[7.528093] (sensors) StdoutLine: {'line': b"writing manifest file '../../build/sensors/sensors.egg-info/SOURCES.txt'\n"}
+[7.529018] (sensors) StdoutLine: {'line': b'running build\n'}
+[7.529674] (sensors) StdoutLine: {'line': b'running build_py\n'}
+[7.530467] (sensors) StdoutLine: {'line': b'copying sensors/sensors.py -> /home/adam/r2_motion/build/sensors/build/lib/sensors\n'}
+[7.532014] (sensors) StdoutLine: {'line': b'running install\n'}
+[7.533555] (sensors) StdoutLine: {'line': b'running install_lib\n'}
+[7.537251] (drivetrain) StdoutLine: {'line': b"reading manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'\n"}
+[7.538089] (sensors) StdoutLine: {'line': b'copying /home/adam/r2_motion/build/sensors/build/lib/sensors/sensors.py -> /home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors\n'}
+[7.538971] (drivetrain) StdoutLine: {'line': b"adding license file 'LICENSE'\n"}
+[7.541975] (sensors) StdoutLine: {'line': b'byte-compiling /home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors/sensors.py to sensors.cpython-310.pyc\n'}
+[7.542929] (drivetrain) StdoutLine: {'line': b"writing manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'\n"}
+[7.543445] (drivetrain) StdoutLine: {'line': b'running build\n'}
+[7.543939] (drivetrain) StdoutLine: {'line': b'running build_py\n'}
+[7.545127] (drivetrain) StdoutLine: {'line': b'running install\n'}
+[7.546848] (drivetrain) StdoutLine: {'line': b'running install_lib\n'}
+[7.549457] (sensors) StdoutLine: {'line': b'running install_data\n'}
+[7.550475] (sensors) StdoutLine: {'line': b'running install_egg_info\n'}
+[7.555407] (drivetrain) StdoutLine: {'line': b'running install_data\n'}
+[7.556362] (drivetrain) StdoutLine: {'line': b'running install_egg_info\n'}
+[7.559338] (sensors) StdoutLine: {'line': b"removing '/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[7.561316] (sensors) StdoutLine: {'line': b'Copying ../../build/sensors/sensors.egg-info to /home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors-0.0.0-py3.10.egg-info\n'}
+[7.565978] (drivetrain) StdoutLine: {'line': b"removing '/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[7.567906] (drivetrain) StdoutLine: {'line': b'Copying ../../build/drivetrain/drivetrain.egg-info to /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain-0.0.0-py3.10.egg-info\n'}
+[7.568838] (sensors) StdoutLine: {'line': b'running install_scripts\n'}
+[7.575195] (drivetrain) StdoutLine: {'line': b'running install_scripts\n'}
+[7.578882] (-) TimerEvent: {}
+[7.672284] (sensors) StdoutLine: {'line': b'Installing sensors script to /home/adam/r2_motion/install/sensors/lib/sensors\n'}
+[7.674281] (sensors) StdoutLine: {'line': b"writing list of installed files to '/home/adam/r2_motion/build/sensors/install.log'\n"}
+[7.679211] (-) TimerEvent: {}
+[7.683111] (drivetrain) StdoutLine: {'line': b'Installing motor script to /home/adam/r2_motion/install/drivetrain/lib/drivetrain\n'}
+[7.686183] (drivetrain) StdoutLine: {'line': b"writing list of installed files to '/home/adam/r2_motion/build/drivetrain/install.log'\n"}
+[7.779583] (-) TimerEvent: {}
+[7.863107] (sensors) CommandEnded: {'returncode': 0}
+[7.879679] (-) TimerEvent: {}
+[7.916571] (sensors) JobEnded: {'identifier': 'sensors', 'rc': 0}
+[7.921871] (drivetrain) CommandEnded: {'returncode': 0}
+[7.952205] (drivetrain) JobEnded: {'identifier': 'drivetrain', 'rc': 0}
+[7.955414] (-) EventReactorShutdown: {}

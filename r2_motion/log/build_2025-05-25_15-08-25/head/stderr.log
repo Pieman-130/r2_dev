@@ -1,0 +1,5 @@
+  File "/home/adam/r2_motion/install/head/lib/python3.10/site-packages/head/head.py", line 1
+    dimport serial
+            ^^^^^^
+SyntaxError: invalid syntax
+

@@ -1,0 +1,24 @@
+[4.535s] Invoking command in '/home/adam/r2_motion/src/head': PYTHONPATH=/home/adam/r2_motion/build/head/prefix_override:/home/adam/r2_motion/install/head/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/head build --build-base /home/adam/r2_motion/build/head/build install --record /home/adam/r2_motion/build/head/install.log --single-version-externally-managed install_data
+[6.088s] running egg_info
+[6.091s] writing ../../build/head/head.egg-info/PKG-INFO
+[6.098s] writing dependency_links to ../../build/head/head.egg-info/dependency_links.txt
+[6.099s] writing entry points to ../../build/head/head.egg-info/entry_points.txt
+[6.100s] writing requirements to ../../build/head/head.egg-info/requires.txt
+[6.100s] writing top-level names to ../../build/head/head.egg-info/top_level.txt
+[6.113s] reading manifest file '../../build/head/head.egg-info/SOURCES.txt'
+[6.123s] writing manifest file '../../build/head/head.egg-info/SOURCES.txt'
+[6.124s] running build
+[6.124s] running build_py
+[6.126s] copying head/head.py -> /home/adam/r2_motion/build/head/build/lib/head
+[6.129s] running install
+[6.131s] running install_lib
+[6.142s] copying /home/adam/r2_motion/build/head/build/lib/head/head.py -> /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head
+[6.147s] byte-compiling /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head/head.py to head.cpython-310.pyc
+[6.155s] running install_data
+[6.157s] running install_egg_info
+[6.166s] removing '/home/adam/r2_motion/install/head/lib/python3.10/site-packages/head-0.0.0-py3.10.egg-info' (and everything under it)
+[6.168s] Copying ../../build/head/head.egg-info to /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head-0.0.0-py3.10.egg-info
+[6.180s] running install_scripts
+[6.276s] Installing head script to /home/adam/r2_motion/install/head/lib/head
+[6.284s] writing list of installed files to '/home/adam/r2_motion/build/head/install.log'
+[6.416s] Invoked command in '/home/adam/r2_motion/src/head' returned '0': PYTHONPATH=/home/adam/r2_motion/build/head/prefix_override:/home/adam/r2_motion/install/head/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/head build --build-base /home/adam/r2_motion/build/head/build install --record /home/adam/r2_motion/build/head/install.log --single-version-externally-managed install_data

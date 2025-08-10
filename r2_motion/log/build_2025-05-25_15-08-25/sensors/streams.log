@@ -1,0 +1,27 @@
+[10.470s] Invoking command in '/home/adam/r2_motion/src/sensors': PYTHONPATH=/home/adam/r2_motion/build/sensors/prefix_override:/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/sensors build --build-base /home/adam/r2_motion/build/sensors/build install --record /home/adam/r2_motion/build/sensors/install.log --single-version-externally-managed install_data
+[12.632s] running egg_info
+[12.632s] writing ../../build/sensors/sensors.egg-info/PKG-INFO
+[12.634s] writing dependency_links to ../../build/sensors/sensors.egg-info/dependency_links.txt
+[12.637s] writing entry points to ../../build/sensors/sensors.egg-info/entry_points.txt
+[12.644s] writing requirements to ../../build/sensors/sensors.egg-info/requires.txt
+[12.645s] writing top-level names to ../../build/sensors/sensors.egg-info/top_level.txt
+[12.662s] reading manifest file '../../build/sensors/sensors.egg-info/SOURCES.txt'
+[12.669s] writing manifest file '../../build/sensors/sensors.egg-info/SOURCES.txt'
+[12.682s] running build
+[12.683s] running build_py
+[12.685s] running install
+[12.687s] running install_lib
+[12.696s] copying /home/adam/r2_motion/build/sensors/build/lib/sensors/sensors.py -> /home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors
+[12.697s] copying /home/adam/r2_motion/build/sensors/build/lib/sensors/__init__.py -> /home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors
+[12.712s] byte-compiling /home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors/sensors.py to sensors.cpython-310.pyc
+[12.726s] byte-compiling /home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors/__init__.py to __init__.cpython-310.pyc
+[12.728s] running install_data
+[12.730s] copying resource/sensors -> /home/adam/r2_motion/install/sensors/share/ament_index/resource_index/packages
+[12.732s] copying package.xml -> /home/adam/r2_motion/install/sensors/share/sensors
+[12.734s] running install_egg_info
+[12.774s] removing '/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors-0.0.0-py3.10.egg-info' (and everything under it)
+[12.787s] Copying ../../build/sensors/sensors.egg-info to /home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors-0.0.0-py3.10.egg-info
+[12.811s] running install_scripts
+[12.967s] Installing sensors script to /home/adam/r2_motion/install/sensors/lib/sensors
+[12.969s] writing list of installed files to '/home/adam/r2_motion/build/sensors/install.log'
+[13.204s] Invoked command in '/home/adam/r2_motion/src/sensors' returned '0': PYTHONPATH=/home/adam/r2_motion/build/sensors/prefix_override:/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/sensors build --build-base /home/adam/r2_motion/build/sensors/build install --record /home/adam/r2_motion/build/sensors/install.log --single-version-externally-managed install_data

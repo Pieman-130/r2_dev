@@ -1,0 +1,3 @@
+[console_scripts]
+motor = drivetrain.motordrive:main
+

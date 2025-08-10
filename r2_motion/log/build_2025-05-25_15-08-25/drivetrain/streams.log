@@ -1,0 +1,35 @@
+[10.474s] Invoking command in '/home/adam/r2_motion/src/drivetrain': PYTHONPATH=/home/adam/r2_motion/build/drivetrain/prefix_override:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/drivetrain build --build-base /home/adam/r2_motion/build/drivetrain/build install --record /home/adam/r2_motion/build/drivetrain/install.log --single-version-externally-managed install_data
+[12.569s] running egg_info
+[12.574s] writing ../../build/drivetrain/drivetrain.egg-info/PKG-INFO
+[12.576s] writing dependency_links to ../../build/drivetrain/drivetrain.egg-info/dependency_links.txt
+[12.578s] writing entry points to ../../build/drivetrain/drivetrain.egg-info/entry_points.txt
+[12.579s] writing requirements to ../../build/drivetrain/drivetrain.egg-info/requires.txt
+[12.580s] writing top-level names to ../../build/drivetrain/drivetrain.egg-info/top_level.txt
+[12.596s] reading manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'
+[12.597s] adding license file 'LICENSE'
+[12.601s] writing manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'
+[12.603s] running build
+[12.604s] running build_py
+[12.606s] copying drivetrain/motordrive.py -> /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain
+[12.627s] copying drivetrain/motor_test.py -> /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain
+[12.629s] copying drivetrain/__init__.py -> /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain
+[12.638s] running install
+[12.643s] running install_lib
+[12.644s] copying /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain/motordrive.py -> /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain
+[12.645s] copying /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain/motor_test.py -> /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain
+[12.645s] copying /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain/hello.py -> /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain
+[12.646s] copying /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain/__init__.py -> /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain
+[12.663s] byte-compiling /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain/motordrive.py to motordrive.cpython-310.pyc
+[12.664s] byte-compiling /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain/motor_test.py to motor_test.cpython-310.pyc
+[12.665s] byte-compiling /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain/hello.py to hello.cpython-310.pyc
+[12.666s] byte-compiling /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain/__init__.py to __init__.cpython-310.pyc
+[12.667s] running install_data
+[12.668s] copying resource/drivetrain -> /home/adam/r2_motion/install/drivetrain/share/ament_index/resource_index/packages
+[12.668s] copying package.xml -> /home/adam/r2_motion/install/drivetrain/share/drivetrain
+[12.669s] running install_egg_info
+[12.670s] removing '/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain-0.0.0-py3.10.egg-info' (and everything under it)
+[12.671s] Copying ../../build/drivetrain/drivetrain.egg-info to /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain-0.0.0-py3.10.egg-info
+[12.682s] running install_scripts
+[12.841s] Installing motor script to /home/adam/r2_motion/install/drivetrain/lib/drivetrain
+[12.848s] writing list of installed files to '/home/adam/r2_motion/build/drivetrain/install.log'
+[13.217s] Invoked command in '/home/adam/r2_motion/src/drivetrain' returned '0': PYTHONPATH=/home/adam/r2_motion/build/drivetrain/prefix_override:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/drivetrain build --build-base /home/adam/r2_motion/build/drivetrain/build install --record /home/adam/r2_motion/build/drivetrain/install.log --single-version-externally-managed install_data

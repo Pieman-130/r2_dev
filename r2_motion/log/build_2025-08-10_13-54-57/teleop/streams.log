@@ -1,0 +1,37 @@
+[5.845s] Invoking command in '/home/adam/r2_motion/src/teleop': PYTHONPATH=/home/adam/r2_motion/build/teleop/prefix_override:/home/adam/r2_motion/install/teleop/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/teleop build --build-base /home/adam/r2_motion/build/teleop/build install --record /home/adam/r2_motion/build/teleop/install.log --single-version-externally-managed install_data
+[7.573s] running egg_info
+[7.575s] creating ../../build/teleop/teleop.egg-info
+[7.576s] writing ../../build/teleop/teleop.egg-info/PKG-INFO
+[7.578s] writing dependency_links to ../../build/teleop/teleop.egg-info/dependency_links.txt
+[7.580s] writing entry points to ../../build/teleop/teleop.egg-info/entry_points.txt
+[7.581s] writing requirements to ../../build/teleop/teleop.egg-info/requires.txt
+[7.581s] writing top-level names to ../../build/teleop/teleop.egg-info/top_level.txt
+[7.583s] writing manifest file '../../build/teleop/teleop.egg-info/SOURCES.txt'
+[7.591s] reading manifest file '../../build/teleop/teleop.egg-info/SOURCES.txt'
+[7.595s] writing manifest file '../../build/teleop/teleop.egg-info/SOURCES.txt'
+[7.597s] running build
+[7.597s] running build_py
+[7.598s] creating /home/adam/r2_motion/build/teleop/build
+[7.599s] creating /home/adam/r2_motion/build/teleop/build/lib
+[7.600s] creating /home/adam/r2_motion/build/teleop/build/lib/teleop
+[7.606s] copying teleop/teleop.py -> /home/adam/r2_motion/build/teleop/build/lib/teleop
+[7.607s] copying teleop/__init__.py -> /home/adam/r2_motion/build/teleop/build/lib/teleop
+[7.607s] running install
+[7.608s] running install_lib
+[7.608s] creating /home/adam/r2_motion/install/teleop/lib/python3.10/site-packages/teleop
+[7.609s] copying /home/adam/r2_motion/build/teleop/build/lib/teleop/teleop.py -> /home/adam/r2_motion/install/teleop/lib/python3.10/site-packages/teleop
+[7.611s] copying /home/adam/r2_motion/build/teleop/build/lib/teleop/__init__.py -> /home/adam/r2_motion/install/teleop/lib/python3.10/site-packages/teleop
+[7.613s] byte-compiling /home/adam/r2_motion/install/teleop/lib/python3.10/site-packages/teleop/teleop.py to teleop.cpython-310.pyc
+[7.614s] byte-compiling /home/adam/r2_motion/install/teleop/lib/python3.10/site-packages/teleop/__init__.py to __init__.cpython-310.pyc
+[7.616s] running install_data
+[7.616s] creating /home/adam/r2_motion/install/teleop/share/ament_index
+[7.617s] creating /home/adam/r2_motion/install/teleop/share/ament_index/resource_index
+[7.618s] creating /home/adam/r2_motion/install/teleop/share/ament_index/resource_index/packages
+[7.618s] copying resource/teleop -> /home/adam/r2_motion/install/teleop/share/ament_index/resource_index/packages
+[7.619s] copying package.xml -> /home/adam/r2_motion/install/teleop/share/teleop
+[7.620s] running install_egg_info
+[7.628s] Copying ../../build/teleop/teleop.egg-info to /home/adam/r2_motion/install/teleop/lib/python3.10/site-packages/teleop-0.0.0-py3.10.egg-info
+[7.636s] running install_scripts
+[7.741s] Installing teleop script to /home/adam/r2_motion/install/teleop/lib/teleop
+[7.742s] writing list of installed files to '/home/adam/r2_motion/build/teleop/install.log'
+[7.938s] Invoked command in '/home/adam/r2_motion/src/teleop' returned '0': PYTHONPATH=/home/adam/r2_motion/build/teleop/prefix_override:/home/adam/r2_motion/install/teleop/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/teleop build --build-base /home/adam/r2_motion/build/teleop/build install --record /home/adam/r2_motion/build/teleop/install.log --single-version-externally-managed install_data

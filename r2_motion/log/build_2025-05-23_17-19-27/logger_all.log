@@ -1,0 +1,185 @@
+[1.765s] DEBUG:colcon:Command line arguments: ['/home/adam/.local/bin/colcon', 'build']
+[1.766s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=4, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, gradle_args=None, gradle_task=None, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0xffffa9e83250>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffffa9e828c0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffffa9e828c0>>, mixin_verb=('build',))
+[3.896s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[3.898s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[3.898s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[3.899s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[3.899s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[3.900s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[3.901s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/adam/r2_motion'
+[3.903s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[3.903s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[3.904s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[3.904s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[3.904s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[3.905s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[3.906s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[3.907s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[3.908s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[4.005s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'gradle', 'python']
+[4.006s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[4.006s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'gradle'
+[4.006s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[4.007s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[4.007s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[4.008s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[4.009s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[4.010s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[4.011s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[4.013s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[4.013s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[4.015s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[4.016s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[4.017s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[4.018s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[4.019s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[4.020s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[4.021s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[4.021s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[4.021s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[4.021s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[4.022s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[4.022s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[4.022s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'gradle', 'python']
+[4.023s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[4.023s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'gradle'
+[4.024s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[4.024s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[4.025s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[4.028s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extensions ['ignore', 'ignore_ament_install']
+[4.029s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extension 'ignore'
+[4.029s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extension 'ignore_ament_install'
+[4.030s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extensions ['colcon_pkg']
+[4.030s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extension 'colcon_pkg'
+[4.031s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extensions ['colcon_meta']
+[4.031s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extension 'colcon_meta'
+[4.032s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extensions ['ros']
+[4.032s] Level 1:colcon.colcon_core.package_identification:_identify(src/drivetrain) by extension 'ros'
+[4.049s] DEBUG:colcon.colcon_core.package_identification:Package 'src/drivetrain' with type 'ros.ament_python' and name 'drivetrain'
+[4.052s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extensions ['ignore', 'ignore_ament_install']
+[4.052s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extension 'ignore'
+[4.053s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extension 'ignore_ament_install'
+[4.054s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extensions ['colcon_pkg']
+[4.054s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extension 'colcon_pkg'
+[4.055s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extensions ['colcon_meta']
+[4.055s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extension 'colcon_meta'
+[4.056s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extensions ['ros']
+[4.056s] Level 1:colcon.colcon_core.package_identification:_identify(src/sensors) by extension 'ros'
+[4.061s] DEBUG:colcon.colcon_core.package_identification:Package 'src/sensors' with type 'ros.ament_python' and name 'sensors'
+[4.062s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[4.062s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[4.062s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[4.063s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[4.063s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[4.363s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[4.364s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[4.388s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 2 installed packages in /home/adam/r2_motion/install
+[4.393s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 5 installed packages in /home/adam/scout/install
+[4.401s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 6 installed packages in /home/adam/fastdds_testing/fastdds_python_ws/install
+[4.416s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 283 installed packages in /opt/ros/humble
+[4.427s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[4.815s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'cmake_args' from command line to 'None'
+[4.815s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'cmake_target' from command line to 'None'
+[4.816s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[4.816s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'cmake_clean_cache' from command line to 'False'
+[4.816s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'cmake_clean_first' from command line to 'False'
+[4.816s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'cmake_force_configure' from command line to 'False'
+[4.817s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'gradle_args' from command line to 'None'
+[4.817s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'gradle_task' from command line to 'None'
+[4.818s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'ament_cmake_args' from command line to 'None'
+[4.818s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'catkin_cmake_args' from command line to 'None'
+[4.819s] Level 5:colcon.colcon_core.verb:set package 'drivetrain' build argument 'catkin_skip_building_tests' from command line to 'False'
+[4.819s] DEBUG:colcon.colcon_core.verb:Building package 'drivetrain' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/adam/r2_motion/build/drivetrain', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'gradle_args': None, 'gradle_task': None, 'install_base': '/home/adam/r2_motion/install/drivetrain', 'merge_install': False, 'path': '/home/adam/r2_motion/src/drivetrain', 'symlink_install': False, 'test_result_base': None}
+[4.822s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'cmake_args' from command line to 'None'
+[4.823s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'cmake_target' from command line to 'None'
+[4.823s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[4.823s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'cmake_clean_cache' from command line to 'False'
+[4.823s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'cmake_clean_first' from command line to 'False'
+[4.824s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'cmake_force_configure' from command line to 'False'
+[4.824s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'gradle_args' from command line to 'None'
+[4.824s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'gradle_task' from command line to 'None'
+[4.824s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'ament_cmake_args' from command line to 'None'
+[4.824s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'catkin_cmake_args' from command line to 'None'
+[4.825s] Level 5:colcon.colcon_core.verb:set package 'sensors' build argument 'catkin_skip_building_tests' from command line to 'False'
+[4.825s] DEBUG:colcon.colcon_core.verb:Building package 'sensors' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/adam/r2_motion/build/sensors', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'gradle_args': None, 'gradle_task': None, 'install_base': '/home/adam/r2_motion/install/sensors', 'merge_install': False, 'path': '/home/adam/r2_motion/src/sensors', 'symlink_install': False, 'test_result_base': None}
+[4.826s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[4.832s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[4.835s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/adam/r2_motion/src/drivetrain' with build type 'ament_python'
+[4.837s] Level 1:colcon.colcon_core.shell:create_environment_hook('drivetrain', 'ament_prefix_path')
+[4.863s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[4.864s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/adam/r2_motion/install/drivetrain/share/drivetrain/hook/ament_prefix_path.ps1'
+[4.871s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/adam/r2_motion/install/drivetrain/share/drivetrain/hook/ament_prefix_path.dsv'
+[4.874s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/adam/r2_motion/install/drivetrain/share/drivetrain/hook/ament_prefix_path.sh'
+[4.883s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.884s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.933s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/adam/r2_motion/src/sensors' with build type 'ament_python'
+[4.935s] Level 1:colcon.colcon_core.shell:create_environment_hook('sensors', 'ament_prefix_path')
+[4.937s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/adam/r2_motion/install/sensors/share/sensors/hook/ament_prefix_path.ps1'
+[4.947s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/adam/r2_motion/install/sensors/share/sensors/hook/ament_prefix_path.dsv'
+[4.951s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/adam/r2_motion/install/sensors/share/sensors/hook/ament_prefix_path.sh'
+[4.959s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.960s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[8.527s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/adam/r2_motion/src/drivetrain'
+[8.529s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[8.530s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[12.047s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/adam/r2_motion/src/sensors'
+[12.049s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[12.049s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[17.574s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/adam/r2_motion/src/drivetrain': PYTHONPATH=/home/adam/r2_motion/build/drivetrain/prefix_override:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/drivetrain build --build-base /home/adam/r2_motion/build/drivetrain/build install --record /home/adam/r2_motion/build/drivetrain/install.log --single-version-externally-managed install_data
+[17.902s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/adam/r2_motion/src/sensors': PYTHONPATH=/home/adam/r2_motion/build/sensors/prefix_override:/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/sensors build --build-base /home/adam/r2_motion/build/sensors/build install --record /home/adam/r2_motion/build/sensors/install.log --single-version-externally-managed install_data
+[22.802s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/adam/r2_motion/src/sensors' returned '0': PYTHONPATH=/home/adam/r2_motion/build/sensors/prefix_override:/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/sensors build --build-base /home/adam/r2_motion/build/sensors/build install --record /home/adam/r2_motion/build/sensors/install.log --single-version-externally-managed install_data
+[22.868s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/sensors' for CMake module files
+[22.875s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/sensors' for CMake config files
+[22.887s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/sensors/lib'
+[22.889s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/sensors/bin'
+[22.890s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/sensors/lib/pkgconfig/sensors.pc'
+[22.892s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages'
+[22.893s] Level 1:colcon.colcon_core.shell:create_environment_hook('sensors', 'pythonpath')
+[22.895s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/adam/r2_motion/install/sensors/share/sensors/hook/pythonpath.ps1'
+[22.901s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/adam/r2_motion/install/sensors/share/sensors/hook/pythonpath.dsv'
+[22.905s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/adam/r2_motion/install/sensors/share/sensors/hook/pythonpath.sh'
+[22.910s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/sensors/bin'
+[22.911s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(sensors)
+[22.914s] INFO:colcon.colcon_core.shell:Creating package script '/home/adam/r2_motion/install/sensors/share/sensors/package.ps1'
+[22.922s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/adam/r2_motion/install/sensors/share/sensors/package.dsv'
+[22.928s] INFO:colcon.colcon_core.shell:Creating package script '/home/adam/r2_motion/install/sensors/share/sensors/package.sh'
+[22.936s] INFO:colcon.colcon_core.shell:Creating package script '/home/adam/r2_motion/install/sensors/share/sensors/package.bash'
+[22.942s] INFO:colcon.colcon_core.shell:Creating package script '/home/adam/r2_motion/install/sensors/share/sensors/package.zsh'
+[22.950s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/adam/r2_motion/install/sensors/share/colcon-core/packages/sensors)
+[22.961s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/drivetrain' for CMake module files
+[22.967s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/adam/r2_motion/src/drivetrain' returned '0': PYTHONPATH=/home/adam/r2_motion/build/drivetrain/prefix_override:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/drivetrain build --build-base /home/adam/r2_motion/build/drivetrain/build install --record /home/adam/r2_motion/build/drivetrain/install.log --single-version-externally-managed install_data
+[22.970s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/drivetrain' for CMake config files
+[22.981s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/drivetrain/lib'
+[22.982s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/drivetrain/bin'
+[22.982s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/drivetrain/lib/pkgconfig/drivetrain.pc'
+[22.984s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages'
+[22.985s] Level 1:colcon.colcon_core.shell:create_environment_hook('drivetrain', 'pythonpath')
+[22.988s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/adam/r2_motion/install/drivetrain/share/drivetrain/hook/pythonpath.ps1'
+[22.992s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/adam/r2_motion/install/drivetrain/share/drivetrain/hook/pythonpath.dsv'
+[22.998s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/adam/r2_motion/install/drivetrain/share/drivetrain/hook/pythonpath.sh'
+[23.006s] Level 1:colcon.colcon_core.environment:checking '/home/adam/r2_motion/install/drivetrain/bin'
+[23.007s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(drivetrain)
+[23.010s] INFO:colcon.colcon_core.shell:Creating package script '/home/adam/r2_motion/install/drivetrain/share/drivetrain/package.ps1'
+[23.014s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/adam/r2_motion/install/drivetrain/share/drivetrain/package.dsv'
+[23.021s] INFO:colcon.colcon_core.shell:Creating package script '/home/adam/r2_motion/install/drivetrain/share/drivetrain/package.sh'
+[23.025s] INFO:colcon.colcon_core.shell:Creating package script '/home/adam/r2_motion/install/drivetrain/share/drivetrain/package.bash'
+[23.031s] INFO:colcon.colcon_core.shell:Creating package script '/home/adam/r2_motion/install/drivetrain/share/drivetrain/package.zsh'
+[23.036s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/adam/r2_motion/install/drivetrain/share/colcon-core/packages/drivetrain)
+[23.040s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[23.043s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[23.044s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[23.045s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[23.098s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[23.100s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[23.101s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[23.194s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[23.195s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/adam/r2_motion/install/local_setup.ps1'
+[23.200s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/adam/r2_motion/install/_local_setup_util_ps1.py'
+[23.208s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/adam/r2_motion/install/setup.ps1'
+[23.220s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/adam/r2_motion/install/local_setup.sh'
+[23.228s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/adam/r2_motion/install/_local_setup_util_sh.py'
+[23.236s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/adam/r2_motion/install/setup.sh'
+[23.250s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/adam/r2_motion/install/local_setup.bash'
+[23.255s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/adam/r2_motion/install/setup.bash'
+[23.264s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/adam/r2_motion/install/local_setup.zsh'
+[23.270s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/adam/r2_motion/install/setup.zsh'

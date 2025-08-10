@@ -1,0 +1,35 @@
+running egg_info
+creating ../../build/head/head.egg-info
+writing ../../build/head/head.egg-info/PKG-INFO
+writing dependency_links to ../../build/head/head.egg-info/dependency_links.txt
+writing entry points to ../../build/head/head.egg-info/entry_points.txt
+writing requirements to ../../build/head/head.egg-info/requires.txt
+writing top-level names to ../../build/head/head.egg-info/top_level.txt
+writing manifest file '../../build/head/head.egg-info/SOURCES.txt'
+reading manifest file '../../build/head/head.egg-info/SOURCES.txt'
+writing manifest file '../../build/head/head.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/adam/r2_motion/build/head/build
+creating /home/adam/r2_motion/build/head/build/lib
+creating /home/adam/r2_motion/build/head/build/lib/head
+copying head/head.py -> /home/adam/r2_motion/build/head/build/lib/head
+copying head/__init__.py -> /home/adam/r2_motion/build/head/build/lib/head
+running install
+running install_lib
+creating /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head
+copying /home/adam/r2_motion/build/head/build/lib/head/head.py -> /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head
+copying /home/adam/r2_motion/build/head/build/lib/head/__init__.py -> /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head
+byte-compiling /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head/head.py to head.cpython-310.pyc
+byte-compiling /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/adam/r2_motion/install/head/share/ament_index
+creating /home/adam/r2_motion/install/head/share/ament_index/resource_index
+creating /home/adam/r2_motion/install/head/share/ament_index/resource_index/packages
+copying resource/head -> /home/adam/r2_motion/install/head/share/ament_index/resource_index/packages
+copying package.xml -> /home/adam/r2_motion/install/head/share/head
+running install_egg_info
+Copying ../../build/head/head.egg-info to /home/adam/r2_motion/install/head/lib/python3.10/site-packages/head-0.0.0-py3.10.egg-info
+running install_scripts
+Installing head script to /home/adam/r2_motion/install/head/lib/head
+writing list of installed files to '/home/adam/r2_motion/build/head/install.log'

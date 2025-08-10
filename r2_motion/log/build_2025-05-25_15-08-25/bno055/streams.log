@@ -1,0 +1,86 @@
+[10.636s] Invoking command in '/home/adam/r2_motion/src/bno055': PYTHONPATH=/home/adam/r2_motion/build/bno055/prefix_override:/home/adam/r2_motion/install/bno055/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/bno055 build --build-base /home/adam/r2_motion/build/bno055/build install --record /home/adam/r2_motion/build/bno055/install.log --single-version-externally-managed install_data
+[12.709s] running egg_info
+[12.716s] creating ../../build/bno055/bno055.egg-info
+[12.721s] writing ../../build/bno055/bno055.egg-info/PKG-INFO
+[12.745s] writing dependency_links to ../../build/bno055/bno055.egg-info/dependency_links.txt
+[12.750s] writing entry points to ../../build/bno055/bno055.egg-info/entry_points.txt
+[12.753s] writing requirements to ../../build/bno055/bno055.egg-info/requires.txt
+[12.754s] writing top-level names to ../../build/bno055/bno055.egg-info/top_level.txt
+[12.755s] writing manifest file '../../build/bno055/bno055.egg-info/SOURCES.txt'
+[12.777s] reading manifest file '../../build/bno055/bno055.egg-info/SOURCES.txt'
+[12.778s] adding license file 'LICENSE'
+[12.787s] adding license file 'AUTHORS'
+[12.788s] writing manifest file '../../build/bno055/bno055.egg-info/SOURCES.txt'
+[12.791s] running build
+[12.793s] running build_py
+[12.794s] creating /home/adam/r2_motion/build/bno055/build
+[12.795s] creating /home/adam/r2_motion/build/bno055/build/lib
+[12.808s] creating /home/adam/r2_motion/build/bno055/build/lib/bno055
+[12.809s] copying bno055/__init__.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055
+[12.809s] copying bno055/bno055.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055
+[12.813s] copying bno055/registers.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055
+[12.815s] creating /home/adam/r2_motion/build/bno055/build/lib/bno055/sensor
+[12.822s] copying bno055/sensor/SensorService.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/sensor
+[12.823s] copying bno055/sensor/__init__.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/sensor
+[12.826s] creating /home/adam/r2_motion/build/bno055/build/lib/bno055/error_handling
+[12.835s] copying bno055/error_handling/__init__.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/error_handling
+[12.836s] copying bno055/error_handling/exceptions.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/error_handling
+[12.837s] creating /home/adam/r2_motion/build/bno055/build/lib/bno055/params
+[12.838s] copying bno055/params/__init__.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/params
+[12.838s] copying bno055/params/NodeParameters.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/params
+[12.839s] creating /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors
+[12.840s] copying bno055/connectors/Connector.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors
+[12.842s] copying bno055/connectors/uart.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors
+[12.842s] copying bno055/connectors/i2c.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors
+[12.843s] copying bno055/connectors/__init__.py -> /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors
+[12.846s] running install
+[12.847s] running install_lib
+[12.860s] creating /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055
+[12.862s] creating /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/sensor
+[12.863s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/sensor/SensorService.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/sensor
+[12.865s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/sensor/__init__.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/sensor
+[12.866s] creating /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/error_handling
+[12.867s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/error_handling/__init__.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/error_handling
+[12.868s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/error_handling/exceptions.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/error_handling
+[12.868s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/bno055.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055
+[12.869s] creating /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/params
+[12.870s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/params/__init__.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/params
+[12.871s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/params/NodeParameters.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/params
+[12.872s] creating /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors
+[12.873s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors/Connector.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors
+[12.874s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors/uart.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors
+[12.875s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors/i2c.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors
+[12.877s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/connectors/__init__.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors
+[12.888s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/registers.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055
+[12.890s] copying /home/adam/r2_motion/build/bno055/build/lib/bno055/__init__.py -> /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055
+[12.892s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/sensor/SensorService.py to SensorService.cpython-310.pyc
+[12.914s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/sensor/__init__.py to __init__.cpython-310.pyc
+[12.927s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/error_handling/__init__.py to __init__.cpython-310.pyc
+[12.929s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/error_handling/exceptions.py to exceptions.cpython-310.pyc
+[12.932s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/bno055.py to bno055.cpython-310.pyc
+[12.933s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/params/__init__.py to __init__.cpython-310.pyc
+[12.950s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/params/NodeParameters.py to NodeParameters.cpython-310.pyc
+[12.956s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors/Connector.py to Connector.cpython-310.pyc
+[12.958s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors/uart.py to uart.cpython-310.pyc
+[12.968s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors/i2c.py to i2c.cpython-310.pyc
+[12.969s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/connectors/__init__.py to __init__.cpython-310.pyc
+[12.977s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/registers.py to registers.cpython-310.pyc
+[12.984s] byte-compiling /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055/__init__.py to __init__.cpython-310.pyc
+[12.986s] running install_data
+[12.988s] creating /home/adam/r2_motion/install/bno055/share/ament_index
+[12.999s] creating /home/adam/r2_motion/install/bno055/share/ament_index/resource_index
+[13.001s] creating /home/adam/r2_motion/install/bno055/share/ament_index/resource_index/packages
+[13.003s] copying resource/bno055 -> /home/adam/r2_motion/install/bno055/share/ament_index/resource_index/packages
+[13.013s] copying package.xml -> /home/adam/r2_motion/install/bno055/share/bno055
+[13.014s] creating /home/adam/r2_motion/install/bno055/share/bno055/launch
+[13.016s] copying launch/bno055.launch.py -> /home/adam/r2_motion/install/bno055/share/bno055/launch
+[13.018s] creating /home/adam/r2_motion/install/bno055/share/bno055/config
+[13.024s] copying bno055/params/bno055_params.yaml -> /home/adam/r2_motion/install/bno055/share/bno055/config
+[13.026s] copying bno055/params/bno055_params_test.yaml -> /home/adam/r2_motion/install/bno055/share/bno055/config
+[13.028s] copying bno055/params/bno055_params_i2c.yaml -> /home/adam/r2_motion/install/bno055/share/bno055/config
+[13.029s] running install_egg_info
+[13.041s] Copying ../../build/bno055/bno055.egg-info to /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055-0.5.0-py3.10.egg-info
+[13.061s] running install_scripts
+[13.225s] Installing bno055 script to /home/adam/r2_motion/install/bno055/lib/bno055
+[13.236s] writing list of installed files to '/home/adam/r2_motion/build/bno055/install.log'
+[13.420s] Invoked command in '/home/adam/r2_motion/src/bno055' returned '0': PYTHONPATH=/home/adam/r2_motion/build/bno055/prefix_override:/home/adam/r2_motion/install/bno055/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/bno055 build --build-base /home/adam/r2_motion/build/bno055/build install --record /home/adam/r2_motion/build/bno055/install.log --single-version-externally-managed install_data

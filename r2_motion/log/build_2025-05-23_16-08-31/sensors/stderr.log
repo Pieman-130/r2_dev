@@ -1,0 +1,5 @@
+  File "/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors/sensors.py", line 96
+    self.current_sensor_data{lt_dist_sensor: rcvd_data[0],
+                            ^
+SyntaxError: invalid syntax
+

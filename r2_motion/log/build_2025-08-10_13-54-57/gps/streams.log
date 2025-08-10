@@ -1,0 +1,21 @@
+[10.894s] Invoking command in '/home/adam/r2_motion/src/gps': PYTHONPATH=/home/adam/r2_motion/build/gps/prefix_override:/home/adam/r2_motion/install/gps/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/gps build --build-base /home/adam/r2_motion/build/gps/build install --record /home/adam/r2_motion/build/gps/install.log --single-version-externally-managed install_data
+[13.248s] running egg_info
+[13.252s] writing ../../build/gps/gps.egg-info/PKG-INFO
+[13.253s] writing dependency_links to ../../build/gps/gps.egg-info/dependency_links.txt
+[13.257s] writing entry points to ../../build/gps/gps.egg-info/entry_points.txt
+[13.258s] writing requirements to ../../build/gps/gps.egg-info/requires.txt
+[13.258s] writing top-level names to ../../build/gps/gps.egg-info/top_level.txt
+[13.269s] reading manifest file '../../build/gps/gps.egg-info/SOURCES.txt'
+[13.276s] writing manifest file '../../build/gps/gps.egg-info/SOURCES.txt'
+[13.278s] running build
+[13.279s] running build_py
+[13.285s] running install
+[13.288s] running install_lib
+[13.301s] running install_data
+[13.305s] running install_egg_info
+[13.325s] removing '/home/adam/r2_motion/install/gps/lib/python3.10/site-packages/gps-0.0.0-py3.10.egg-info' (and everything under it)
+[13.333s] Copying ../../build/gps/gps.egg-info to /home/adam/r2_motion/install/gps/lib/python3.10/site-packages/gps-0.0.0-py3.10.egg-info
+[13.369s] running install_scripts
+[13.613s] Installing gps script to /home/adam/r2_motion/install/gps/lib/gps
+[13.618s] writing list of installed files to '/home/adam/r2_motion/build/gps/install.log'
+[13.959s] Invoked command in '/home/adam/r2_motion/src/gps' returned '0': PYTHONPATH=/home/adam/r2_motion/build/gps/prefix_override:/home/adam/r2_motion/install/gps/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/gps build --build-base /home/adam/r2_motion/build/gps/build install --record /home/adam/r2_motion/build/gps/install.log --single-version-externally-managed install_data

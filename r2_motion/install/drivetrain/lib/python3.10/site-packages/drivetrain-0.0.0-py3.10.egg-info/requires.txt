@@ -1,0 +1,5 @@
+RPi.GPIO
+adafruit-circuitpython-motor
+adafruit-circuitpython-pca9685
+adafruit-circuitpython-servokit
+setuptools

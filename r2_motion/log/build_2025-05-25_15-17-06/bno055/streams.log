@@ -1,0 +1,24 @@
+[3.772s] Invoking command in '/home/adam/r2_motion/src/bno055': PYTHONPATH=/home/adam/r2_motion/build/bno055/prefix_override:/home/adam/r2_motion/install/bno055/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/bno055 build --build-base /home/adam/r2_motion/build/bno055/build install --record /home/adam/r2_motion/build/bno055/install.log --single-version-externally-managed install_data
+[5.326s] running egg_info
+[5.329s] writing ../../build/bno055/bno055.egg-info/PKG-INFO
+[5.330s] writing dependency_links to ../../build/bno055/bno055.egg-info/dependency_links.txt
+[5.331s] writing entry points to ../../build/bno055/bno055.egg-info/entry_points.txt
+[5.332s] writing requirements to ../../build/bno055/bno055.egg-info/requires.txt
+[5.333s] writing top-level names to ../../build/bno055/bno055.egg-info/top_level.txt
+[5.344s] reading manifest file '../../build/bno055/bno055.egg-info/SOURCES.txt'
+[5.346s] adding license file 'LICENSE'
+[5.347s] adding license file 'AUTHORS'
+[5.350s] writing manifest file '../../build/bno055/bno055.egg-info/SOURCES.txt'
+[5.350s] running build
+[5.351s] running build_py
+[5.360s] running install
+[5.361s] running install_lib
+[5.373s] running install_data
+[5.374s] copying bno055/params/bno055_params.yaml -> /home/adam/r2_motion/install/bno055/share/bno055/config
+[5.375s] running install_egg_info
+[5.384s] removing '/home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055-0.5.0-py3.10.egg-info' (and everything under it)
+[5.386s] Copying ../../build/bno055/bno055.egg-info to /home/adam/r2_motion/install/bno055/lib/python3.10/site-packages/bno055-0.5.0-py3.10.egg-info
+[5.392s] running install_scripts
+[5.486s] Installing bno055 script to /home/adam/r2_motion/install/bno055/lib/bno055
+[5.490s] writing list of installed files to '/home/adam/r2_motion/build/bno055/install.log'
+[5.614s] Invoked command in '/home/adam/r2_motion/src/bno055' returned '0': PYTHONPATH=/home/adam/r2_motion/build/bno055/prefix_override:/home/adam/r2_motion/install/bno055/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/bno055 build --build-base /home/adam/r2_motion/build/bno055/build install --record /home/adam/r2_motion/build/bno055/install.log --single-version-externally-managed install_data

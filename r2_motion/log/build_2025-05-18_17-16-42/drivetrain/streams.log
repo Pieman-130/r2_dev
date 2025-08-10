@@ -1,0 +1,25 @@
+[6.545s] Invoking command in '/home/adam/r2_motion/src/drivetrain': PYTHONPATH=/home/adam/r2_motion/build/drivetrain/prefix_override:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/drivetrain build --build-base /home/adam/r2_motion/build/drivetrain/build install --record /home/adam/r2_motion/build/drivetrain/install.log --single-version-externally-managed install_data
+[8.232s] running egg_info
+[8.234s] writing ../../build/drivetrain/drivetrain.egg-info/PKG-INFO
+[8.236s] writing dependency_links to ../../build/drivetrain/drivetrain.egg-info/dependency_links.txt
+[8.237s] writing entry points to ../../build/drivetrain/drivetrain.egg-info/entry_points.txt
+[8.239s] writing requirements to ../../build/drivetrain/drivetrain.egg-info/requires.txt
+[8.240s] writing top-level names to ../../build/drivetrain/drivetrain.egg-info/top_level.txt
+[8.250s] reading manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'
+[8.251s] adding license file 'LICENSE'
+[8.254s] writing manifest file '../../build/drivetrain/drivetrain.egg-info/SOURCES.txt'
+[8.255s] running build
+[8.255s] running build_py
+[8.257s] copying drivetrain/motor_test.py -> /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain
+[8.259s] running install
+[8.260s] running install_lib
+[8.265s] copying /home/adam/r2_motion/build/drivetrain/build/lib/drivetrain/motor_test.py -> /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain
+[8.269s] byte-compiling /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain/motor_test.py to motor_test.cpython-310.pyc
+[8.272s] running install_data
+[8.273s] running install_egg_info
+[8.283s] removing '/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain-0.0.0-py3.10.egg-info' (and everything under it)
+[8.285s] Copying ../../build/drivetrain/drivetrain.egg-info to /home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages/drivetrain-0.0.0-py3.10.egg-info
+[8.293s] running install_scripts
+[8.408s] Installing motor script to /home/adam/r2_motion/install/drivetrain/lib/drivetrain
+[8.411s] writing list of installed files to '/home/adam/r2_motion/build/drivetrain/install.log'
+[8.695s] Invoked command in '/home/adam/r2_motion/src/drivetrain' returned '0': PYTHONPATH=/home/adam/r2_motion/build/drivetrain/prefix_override:/home/adam/r2_motion/install/drivetrain/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/drivetrain build --build-base /home/adam/r2_motion/build/drivetrain/build install --record /home/adam/r2_motion/build/drivetrain/install.log --single-version-externally-managed install_data

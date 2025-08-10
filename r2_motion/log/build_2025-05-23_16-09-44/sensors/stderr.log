@@ -1,0 +1,4 @@
+  File "/home/adam/r2_motion/install/sensors/lib/python3.10/site-packages/sensors/sensors.py", line 105
+    except:
+SyntaxError: expected 'except' or 'finally' block
+
