@@ -1,0 +1,33 @@
+# Compiled/Generated Files
+*.o
+*.pyc
+*.class
+build/
+dist/
+install/
+log/
+
+# Operating System and Editor-Specific Files
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Dependency Management Files/Folders
+node_modules/
+vendor/
+target/
+
+# Log Files and Temporary Files
+*.log
+*.tmp
+temp/
+
+# Environment-Specific Configuration and Secrets
+.env
+config.local.php
+secrets.txt
+
+# Backup Files
+*.bak
