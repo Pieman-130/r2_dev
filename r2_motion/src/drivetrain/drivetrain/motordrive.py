@@ -27,7 +27,7 @@ class MotorDrive(Node):
         '''
         self.motor_subscriber = self.create_subscription(
             Twist,
-            'r2_move/motor',
+            'r2_move/base',
             self.twist_callback,
             10)
 

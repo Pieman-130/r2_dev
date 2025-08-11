@@ -34,8 +34,8 @@ To convert values:
 '''
 
 class SensorRead(Node):
-    '''For reading sensors connected via arduino'''
-    def __init__(self,port='/dev/ttyUSB0',data_rate=115200,pub_rate=PUB_RATE):
+    '''For reading sensors connected via arduino.  Arduino port name is hardcoded in udev rules.'''
+    def __init__(self,port='/dev/arduino0',data_rate=115200,pub_rate=PUB_RATE):
         super().__init__('Arduino_Sensors')
         try:
             self.ser = serial.Serial(port, data_rate)
