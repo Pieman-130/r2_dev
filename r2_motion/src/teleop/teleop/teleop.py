@@ -8,15 +8,20 @@ import sys
 class TeleopNode(Node):
     def __init__(self):
         super().__init__('teleop_node')
-        self.publisher_ = self.create_publisher(Twist, '/r2_move/base', 10)
+        self.base_publisher_ = self.create_publisher(Twist, '/r2_move/base', 10)
+        self.head_publisher_ = self.create_publisher(Twist, '/r2_move/head', 10)
+
+
         
+
+    def get_joy_input(self):
 
 
     def run_teleop(self):
         while rclpy.ok():
             twist_msg = Twist()
 
-            self.publisher_.publish(twist_msg)
+            self.base_publisher_.publish(twist_msg)
             rclpy.spin_once(self, timeout_sec=0.1)
 
 
