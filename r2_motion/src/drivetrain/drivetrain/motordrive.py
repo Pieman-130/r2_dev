@@ -43,8 +43,8 @@ class MotorDrive(Node):
         i2c = busio.I2C(SCL,SDA) #use std I2C GPIO PINS
         pca = PCA9685(i2c)
         pca.frequency = 50
-        self.leftmotor = servo.Servo(pca.channels[LEFT_MOTOR], min_pulse = 0, max_pulse = 3000)
-        self.rightmotor = servo.Servo(pca.channels[RIGHT_MOTOR], min_pulse = 0, max_pulse = 3000)
+        self.leftmotor = servo.Servo(pca.channels[LEFT_MOTOR], min_pulse = 0, max_pulse = 8000)
+        self.rightmotor = servo.Servo(pca.channels[RIGHT_MOTOR], min_pulse = 0, max_pulse = 8000)
         self.set_direction('left','fwd')
         self.set_direction('right','fwd')
 
