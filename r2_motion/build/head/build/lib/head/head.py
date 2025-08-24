@@ -32,7 +32,7 @@ class HeadMotion(Node):
     
         self.head_move_subscriber = self.create_subscription(
             Quaternion,
-            'r2_move/head',
+            'r2_move/head_position',
             self.move_head_callback,
             10)
         

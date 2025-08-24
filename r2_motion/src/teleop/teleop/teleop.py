@@ -13,7 +13,7 @@ class TeleopNode(Node):
     def __init__(self):
         super().__init__('teleop_node')
         self.base_publisher_ = self.create_publisher(Twist, '/r2_move/base', 10)
-        self.head_publisher_ = self.create_publisher(Twist, '/r2_move/head', 10)
+        self.head_publisher_ = self.create_publisher(Twist, '/r2_move/teleop_head', 10)
 
         #setup and look for joystick
         pygame.init()
@@ -74,7 +74,9 @@ class TeleopNode(Node):
             self.base_publisher_.publish(base_msg)
 
             head_msg = Twist()
-            head_msg.x = joy_state[2]*
+            #head_msg.x = joy_state[2]*MAX_HEAD_SPEED
+            #head_msg.y = joy_state[2]*MAX_HEAD_W
+            self.head_publisher_.publish(head_msg)
 
             rclpy.spin_once(self, timeout_sec=0.1)
 
