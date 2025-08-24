@@ -1,3 +1,2 @@
 [console_scripts]
 head = head.head:main
-
