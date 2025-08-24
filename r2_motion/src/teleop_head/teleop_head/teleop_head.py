@@ -73,7 +73,7 @@ class TeleopHeadBridge(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = HeadTwistToQuat()
+    node = TeleopHeadBridge()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
