@@ -66,7 +66,7 @@ class TeleopNode(Node):
         
     def run_teleop(self):
         while rclpy.ok():
-             joy_state = self.get_joy_input()
+            joy_state = self.get_joy_input()
 
             base_msg = Twist()
             base_msg.x = joy_state[0]*MAX_SPEED
