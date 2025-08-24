@@ -27,7 +27,7 @@ class MotorDrive(Node):
         '''
         self.motor_subscriber = self.create_subscription(
             Twist,
-            'r2_move/motor',
+            'r2_move/base',
             self.twist_callback,
             10)
 
@@ -108,6 +108,11 @@ class MotorDrive(Node):
         #V = forward linear velocity
         #w = angular velocity
         #-----------------------------
+        #To determine max angular velocity:
+        #w = (v_r - vl)/b
+        #max vel is 2.2m/s b = 0.225m
+        #w = (2.2-(-2.2))/0.225 = 19.56r/s
+        #1120deg/s, 187rpm
         
         r = 0.075 #in meters
         b = 0.225 #in meters
