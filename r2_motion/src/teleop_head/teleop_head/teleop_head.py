@@ -27,7 +27,7 @@ class TeleopHeadBridge(Node):
         # current orientation (Euler)
         self.yaw = 0.0    # left-right
         self.pitch = 0.0  # up-down
-        #self.roll = 0.0   # probably not used
+        self.roll = 0.0   # probably not used
 
         self.last_time = self.get_clock().now()
 
