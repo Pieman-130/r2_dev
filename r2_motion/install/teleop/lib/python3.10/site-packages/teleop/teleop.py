@@ -8,8 +8,6 @@ import math
 #TODO Setup max speed as a ros param
 MAX_SPEED = 2.2 #m/s
 MAX_ANGULAR_VELOCITY = 19.56 #rad/s
-MAX_HEAD_SPEED = 1.0 #TODO fix these!
-MAX_HEAD_W = 1.0 #TODO fix these!
 
 class TeleopNode(Node):
     def __init__(self):
@@ -28,7 +26,7 @@ class TeleopNode(Node):
         self.joy.init()
 
     def remove_deadspace(self,value):
-        if value >= 0.01 or value <= -0.01:
+        if value >= 0.05 or value <= -0.05:
             return value
         else:
             return 0.0
@@ -36,49 +34,48 @@ class TeleopNode(Node):
 
     def normalize(self,value1,value2):
         magnitude = math.hypot(value1, value2)
-        if magnitude > 1.0:
-            value1 /= magnitude
-            value2 /= magnitude
-      
-        return (value1,value2)
+        if manitude > 1.0:
+            norm1 /= magnitude
+            norm2 /= mangitude
+            return (norm1,norm2)
+        else:
+            return (value1,value2)
 
 
     def get_joy_input(self):
-        #default values
-        lin_base = 0.0
-        ang_base = 0.0
-        lin_head = 0.0
-        ang_head = 0.0
-
-        pygame.event.pump()  # process event queue
-
-        #for event in pygame.event.get():
-         #   if event.type == pygame.JOYAXISMOTION:
+        for event in pygame.event.get():
+            if event.type == pygame.JOYAXISMOTION:
                 #deadman switch: both L2 and R2 need to be held to send teleop cmds
-        if self.joy.get_button(6) and self.joy.get_button(7):
-            lin_base = -self.remove_deadspace(self.joy.get_axis(1))
-            ang_base = -self.remove_deadspace(self.joy.get_axis(0))
-            lin_head = self.remove_deadspace(self.joy.get_axis(3))
-            ang_head = self.remove_deadspace(self.joy.get_axis(4))
+                if self.joy.get_button(6) and self.joy.get_button(7):
+                    lin_base = self.remove_deadspace(self.joy.get_axis(0))
+                    ang_base = self.remove_deadspace(self.joy.get_axis(1))
+                    lin_head = self.remove_deadspace(self.joy.get_axis(3))
+                    ang_head = self.remove_deadspace(self.joy.get_axis(4))
 
-            #normallize
-            lin_base, ang_base = self.normalize(lin_base,ang_base)
-            lin_head, ang_head = self.normalize(lin_head,ang_head)
-        
-        return lin_base,ang_base,lin_head,ang_head         
+                    #normallize
+                    lin_base, ang_base = self.normalize(lin_base,ang_base)
+                    lin_head, ang_head = self.normalize(lin_head,ang_head)
+                else:
+                    lin_base = 0.0
+                    ang_base = 0.0
+                    lin_head = 0.0
+                    ang_head = 0.0
+                
+                return lin_base,ang_base,lin_head,ang_head
+                    
         
     def run_teleop(self):
         while rclpy.ok():
             joy_state = self.get_joy_input()
 
             base_msg = Twist()
-            base_msg.linear.x = joy_state[0]*MAX_SPEED
-            base_msg.angular.z = joy_state[1]*MAX_ANGULAR_VELOCITY
+            base_msg.x = joy_state[0]*MAX_SPEED
+            base_msg.z = joy_state[1]*MAX_ANGULAR_VELOCITY
             self.base_publisher_.publish(base_msg)
 
             head_msg = Twist()
-            head_msg.linear.x = joy_state[2]*MAX_HEAD_SPEED
-            head_msg.angular.y = joy_state[2]*MAX_HEAD_W
+            #head_msg.x = joy_state[2]*MAX_HEAD_SPEED
+            #head_msg.y = joy_state[2]*MAX_HEAD_W
             self.head_publisher_.publish(head_msg)
 
             rclpy.spin_once(self, timeout_sec=0.1)
