@@ -7,6 +7,7 @@ import math
 
 #TODO Setup max speed as a ros param
 MAX_SPEED = 2.2 #m/s
+MAX_ANGULAR_VELOCITY = 19.56 #rad/s
 
 class TeleopNode(Node):
     def __init__(self):
@@ -54,14 +55,27 @@ class TeleopNode(Node):
                     #normallize
                     lin_base, ang_base = self.normalize(lin_base,ang_base)
                     lin_head, ang_head = self.normalize(lin_head,ang_head)
+                else:
+                    lin_base = 0.0
+                    ang_base = 0.0
+                    lin_head = 0.0
+                    ang_head = 0.0
+                
+                return lin_base,ang_base,lin_head,ang_head
                     
         
-
     def run_teleop(self):
         while rclpy.ok():
-            #twist_msg = Twist()
-            self.get_joy_input()
-            #self.base_publisher_.publish(twist_msg)
+             joy_state = self.get_joy_input()
+
+            base_msg = Twist()
+            base_msg.x = joy_state[0]*MAX_SPEED
+            base_msg.z = joy_state[1]*MAX_ANGULAR_VELOCITY
+            self.base_publisher_.publish(base_msg)
+
+            head_msg = Twist()
+            head_msg.x = joy_state[2]*
+
             rclpy.spin_once(self, timeout_sec=0.1)
 
 
