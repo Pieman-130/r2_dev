@@ -31,3 +31,4 @@ secrets.txt
 
 # Backup Files
 *.bak
+r2_motion/src/bno055
