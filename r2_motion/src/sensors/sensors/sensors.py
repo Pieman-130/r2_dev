@@ -35,10 +35,10 @@ To convert values:
 
 class SensorRead(Node):
     '''For reading sensors connected via arduino.  Arduino port name is hardcoded in udev rules.'''
-    def __init__(self,port='/dev/arduino0',data_rate=115200,pub_rate=PUB_RATE):
+    def __init__(self,port='/dev/ttyUSB0',data_rate=115200,pub_rate=PUB_RATE):
         super().__init__('Arduino_Sensors')
         try:
-            self.ser = serial.Serial(port, data_rate)
+            self.ser = serial.Serial(port, data_rate, timeout=0.2)
         except:
             self.get_logger().error("Failed to connect to Arduino!")
             rclpy.shutdown()
@@ -88,9 +88,11 @@ class SensorRead(Node):
 
 
     def read_sensors(self):
+        #data = self.ser.read(self.ser.in_waiting or 1)
+        #if data:
+        #    buffer.extend(data)
         if self.ser.in_waiting >= PACKET_SIZE:
             data = self.ser.read(PACKET_SIZE)
-
             payload = self._validate_chunk(data)
             if payload:
                 try:
@@ -106,11 +108,9 @@ class SensorRead(Node):
                                 }
                 except:
                     self.get_logger().warn("Failed to decode data from arduino sensors.")
-
-
     def lt_dst_calbk(self):
         msg = Float32()
-        data = self.current_sensor_data['lt_dist_sensor']
+        data = self.current_sensor_data['rr_dist_sensor']
 
         if data: #none signifies nothing received yet
             distance = data*0.0343/2/100 #distance in meters
@@ -196,7 +196,9 @@ def main():
 
     rclpy.init()
     sensors = SensorRead()
+    sensors.get_logger().info("USS and Cliff Sensor Monitoring Starting Up.")
     rclpy.spin(sensors)
+    sensors.get_logger().info("USS and Cliff Sensor Monitoring Stopping.")
     sensors.destroy_node()
     rclpy.shutdown()
 
