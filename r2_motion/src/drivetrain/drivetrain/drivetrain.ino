@@ -1,7 +1,7 @@
-#define LEFTMOTOR 5     // PWM pin for left motor
-#define RIGHTMOTOR 6    // PWM pin for right motor
-#define LEFTDIR 7       // Direction pin for left motor
-#define RIGHTDIR 8      // Direction pin for right motor
+#define LEFTMOTOR 9     // PWM pin for left motor
+#define RIGHTMOTOR 10    // PWM pin for right motor
+#define LEFTDIR 5       // Direction pin for left motor
+#define RIGHTDIR 4      // Direction pin for right motor
 
 const byte PREAMBLE = 0xAA;
 const unsigned long FAILSAFE_TIMEOUT = 1000; // milliseconds (1 second)
@@ -62,3 +62,5 @@ void flushSerial() {
   while (Serial.available()) Serial.read();
 }
 
+//arduino-cli compile --fqbn arduino:avr:leonardo
+//arduino-cli upload -p /dev/ttyACM0  --fqbn arduino:avr:leonardo

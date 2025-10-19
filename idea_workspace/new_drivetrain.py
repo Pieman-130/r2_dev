@@ -1,7 +1,7 @@
 import serial
 import time
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 PREAMBLE = 0xAA
 
 def send_motor_command(left_dir, left_speed, right_dir, right_speed):
@@ -15,13 +15,8 @@ def send_motor_command(left_dir, left_speed, right_dir, right_speed):
     ser.flush()
 
 # Example movement sequence
-send_motor_command(1, 50, 1, 50)  # forward
-time.sleep(1)
-
-send_motor_command(0, 50, 0, 50)  # reverse
-time.sleep(1)
-
-send_motor_command(1, 50, 0, 50)  # spin in place
+send_motor_command(1, 0, 0, 10)  # forward
+print("Sent Forward")
 time.sleep(1)
 
 # Stop sending commands — Arduino failsafe will auto-stop after 1 second
