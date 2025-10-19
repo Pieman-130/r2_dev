@@ -8,7 +8,7 @@ import threading
 PUB_RATE = 1.0  #1Hz
 
 class GPSNode(Node):
-    def __init__(self,serial_port='/dev/ttyUSB1',baud=4800,pub_rate=PUB_RATE):
+    def __init__(self,serial_port='/dev/GPS0',baud=4800,pub_rate=PUB_RATE):
         super().__init__('GPS_BU353S4')
 
         self.port = serial_port
@@ -66,7 +66,7 @@ class GPSNode(Node):
             msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_APPROXIMATED
 
             self.gps_publisher.publish(msg)
-            self.get_logger().debug(f"Published: Lat: {msg.latitude}, Long: {msg.longitude}, Alt: {msg.altitude}m")
+            self.get_logger().info(f"Published: Lat: {msg.latitude}, Long: {msg.longitude}, Alt: {msg.altitude}m")
 
 
 def main():
@@ -75,7 +75,6 @@ def main():
     gps.serial_listener()
     rclpy.spin(gps)
     rclpy.shutdown()
-
 
 
 if __name__ == '__main__':
