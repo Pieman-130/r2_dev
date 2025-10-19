@@ -35,7 +35,7 @@ To convert values:
 
 class SensorRead(Node):
     '''For reading sensors connected via arduino.  Arduino port name is hardcoded in udev rules.'''
-    def __init__(self,port='/dev/ttyUSB0',data_rate=115200,pub_rate=PUB_RATE):
+    def __init__(self,port='/dev/SENS0',data_rate=115200,pub_rate=PUB_RATE):
         super().__init__('Arduino_Sensors')
         try:
             self.ser = serial.Serial(port, data_rate, timeout=0.2)
@@ -106,6 +106,7 @@ class SensorRead(Node):
                                 'rt_hall_sensor': rcvd_data[5],
                                 'lt_hall_sensor': rcvd_data[6]
                                 }
+                    #print(self.current_sensor_data)
                 except:
                     self.get_logger().warn("Failed to decode data from arduino sensors.")
     def lt_dst_calbk(self):
