@@ -184,7 +184,6 @@ class Head(Node):
             angle = SERVO_MAX
         payload = bytes([CMD_HEADER, CMD_TYPE_ANGLE, angle])
         cs = self.xor_checksum(payload)
-        print("Angle Request: ", payload + bytes([cs]))
         return payload + bytes([cs])
 
     
