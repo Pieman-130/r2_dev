@@ -7,8 +7,8 @@ import sys
 PREAMBLE = 0xAA
 POSTAMBLE = 0x55
 
-PORT = "/dev/ttyUSB0"   # Change if needed
-BAUD = 115200
+PORT = "/dev/servo"   # Change if needed
+BAUD = 9600
 
 
 # ---------------- CRC ----------------

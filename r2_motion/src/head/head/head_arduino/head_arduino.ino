@@ -16,7 +16,7 @@ const unsigned long REPORT_INTERVAL  = 200;   // ms between telemetry packets
 const unsigned long SERVO_TIMEOUT_MS = 20000; // 20s auto-return to center
 
 // --- Servo Speed Control ---
-const int SERVO_STEP_DELAY = 15;  // ms between each step (higher = slower)
+int SERVO_STEP_DELAY = 15;  // ms between each step (higher = slower)
 const int SERVO_STEP_SIZE  = 1;   // servo units per step (higher = faster)
 int targetServoVal = straight;    // where we want to get to
 
@@ -27,6 +27,7 @@ int targetServoVal = straight;    // where we want to get to
 
 const byte CMD_HEADER    = 0xAA;
 const byte CMD_TYPE_SERVO = 0x01;
+const byte CMD_TYPE_SPEED = 0x02;
 const byte TEL_HEADER    = 0xBB;
 
 float pitch = 0.0;
@@ -114,7 +115,7 @@ void updateServo() {
 
 
 void processIncoming() {
-  // Expect: [0xAA, 0x01, angle_byte, checksum]
+  // Expect: [0xAA, 0x01/0x02, angle_byte, checksum]
   static byte buf[4];
   static int  idx = 0;
 
@@ -129,18 +130,20 @@ void processIncoming() {
       if (idx == 4) {
         idx = 0;
         byte expected = calcChecksum(buf, 3);  // XOR of bytes 0-2
-        if (buf[3] == expected && buf[1] == CMD_TYPE_SERVO) {
-          // Clamp to safe range
-          int angle = constrain(buf[2], down_limit, up_limit);
-          targetServoVal = angle;
-          lastCmdTime     = millis();
-
-        }
+        if (buf[3] == expected) {
+          if (buf[1] == CMD_TYPE_SERVO) {
+            // Clamp to safe range
+            int angle = constrain(buf[2], down_limit, up_limit);
+            targetServoVal = angle;
+            lastCmdTime     = millis();
+          } else if (buf[1] == CMD_TYPE_SPEED) {
+            SERVO_STEP_DELAY = buf[2];
+          }
         // bad checksum / unknown type → silently drop
       }
     }
   }
-}
+  }}
 
 // -------------------------------------------------------
 void loop() {

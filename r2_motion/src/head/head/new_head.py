@@ -13,17 +13,20 @@ import time
 import threading
 import numpy as np
 from rclpy.node import Node
+import rclpy
 from geometry_msgs.msg import Quaternion
-from std_msgs.msg import Float64
+from std_msgs.msg import Float32, Header
 from sensor_msgs.msg import Range
 
 # ── Config ────────────────────────────────────────────────────────────────────
 PORT      = "/dev/servo"      
 BAUD      = 9600
 CMD_HEADER = 0xAA
-CMD_TYPE   = 0x01
+CMD_TYPE_ANGLE   = 0x01
+CMD_TYPE_SPEED = 0x02
 TEL_HEADER = 0xBB
 TEL_LEN    = 6          # bytes per telemetry packet
+PUB_RATE = 0.2 #5Hz
 
 # Servo range matching the Arduino constants
 SERVO_MIN    = 130
@@ -46,12 +49,12 @@ class Head(Node):
             10)
 
         self.head_pos_publisher = self.create_publisher(
-            Float64,
+            Float32,
             'head/actual_pos',
             10)
 
         self.head_move_subscriber = self.create_subscription(
-            Float64,
+            Float32,
             'head/desired_pos',
             self.move_head_callback,
             10)
@@ -101,17 +104,62 @@ class Head(Node):
                 pkt = bytes(self.ser_buf[:TEL_LEN])
                 del self.ser_buf[:TEL_LEN]
 
-                result = parse_telemetry(pkt)
+                result = self.parse_telemetry(pkt)
                 if result:
                     self.dist, self.pitch = result
     
 
     def pub_head_pos(self,):
-        pass
+        msg = Float32()
+        if self.pitch:
+            msg.data = self.pitch
+
+            self.head_pos_publisher.publish(msg)
+            self.get_logger().debug(f"Published Head Position: {msg.data}deg")
 
 
     def pub_head_dis(self,):
-        pass
+        msg = Range()
+        #For the VL53L0X https://www.adafruit.com/product/3317
+        msg.radiation_type = 1 #infrared
+        msg.field_of_view = 0.610865 #35deg in rad
+        msg.min_range = 0.10
+        msg.max_range = 1.2
+        if self.dist:
+            msg.range = self.dist
+
+        hdr = Header()
+        hdr.stamp = self.get_clock().now().to_msg()
+        hdr.frame_id = "head"
+        msg.header = hdr
+        
+        self.head_dist_publisher.publish(msg)
+        self.get_logger().debug(f"Published Head Dist Range: {msg.range}m")
+
+
+    def move_head_callback(self, msg):
+        try:
+            # Clamp pitch to valid range before converting
+            pitch_target = max(PITCH_MIN, min(PITCH_MAX, float(msg.data)))
+            angle = self.pitch_to_servo(pitch_target)
+            cmd = self.build_servo_command(angle)
+            self.ser.write(cmd)
+            self.ser.flush()
+
+        except ValueError:
+            self.get_logger().error(f"A pitch value of {msg.data} is not valid")
+
+
+    def move_head_speed_callback(self, msg):
+             try:
+                # Clamp pitch to valid range before converting
+                step_delay = int(msg.data)
+                cmd = self.build_speed_command(step_delay)
+                self.ser.write(cmd)
+                self.ser.flush()
+
+             except ValueError:
+                self.get_logger().error(f"A servo delay value of {msg.data} is not valid")
      
 
     def pitch_to_servo(self, pitch_angle: float) -> int:
@@ -134,8 +182,17 @@ class Head(Node):
             angle = SERVO_MIN
         elif angle > SERVO_MAX:
             angle = SERVO_MAX
-        payload = bytes([CMD_HEADER, CMD_TYPE, angle])
-        cs = xor_checksum(payload)
+        payload = bytes([CMD_HEADER, CMD_TYPE_ANGLE, angle])
+        cs = self.xor_checksum(payload)
+        print("Angle Request: ", payload + bytes([cs]))
+        return payload + bytes([cs])
+
+    
+    def build_speed_command(self, step_delay: int) -> bytes:
+        """step_delay is SERVO_STEP_DELAY in ms, clamped 1-255."""
+        step_delay = max(1, min(255, step_delay))
+        payload = bytes([CMD_HEADER, CMD_TYPE_SPEED, step_delay])
+        cs = self.xor_checksum(payload)
         return payload + bytes([cs])
 
 
@@ -147,10 +204,9 @@ class Head(Node):
         """
         if len(pkt) != TEL_LEN or pkt[0] != TEL_HEADER:
             return None
-        expected_cs = xor_checksum(pkt[:5])
+        expected_cs = self.xor_checksum(pkt[:5])
         if pkt[5] != expected_cs:
-            self.get_logger().warn(f"Bad telemetry checksum (got {pkt[5]:02X}, 
-                                   expected {expected_cs:02X})")
+            self.get_logger().warn(f"Bad telemetry checksum (got {pkt[5]:02X}, expected {expected_cs:02X})")
             return None
         dist_mm   = struct.unpack(">H", pkt[1:3])[0]   # unsigned 16-bit
         pitch_raw = struct.unpack(">h", pkt[3:5])[0]   # signed 16-bit
@@ -168,49 +224,7 @@ def main(args=None):
     finally:
         head.destroy_node()
         rclpy.shutdown()
-   
-    while True:
-        user_in = input("Pitch angle > ").strip().lower()
-
-        if user_in == 'q':
-            print("Exiting.")
-            break
-
-        if user_in == 'c':
-            pitch_target = PITCH_CENTER
-        else:
-            try:
-                pitch_target = float(user_in)   # float so e.g. 12.5 works
-            except ValueError as e:
-                print(f"  Parse error: {e!r} on input {user_in!r}")
-                continue
-
-        # Clamp pitch to valid range before converting
-        pitch_target = max(PITCH_MIN, min(PITCH_MAX, pitch_target))
-        angle = pitch_to_servo(pitch_target)
-
-        cmd = build_servo_command(angle)
-        ser.write(cmd)
-        ser.flush()
-        print(f"  → Pitch {pitch_target}° → servo value {angle}  (packet: {cmd.hex(' ').upper()})")
-
-        time.sleep(0.3)
-        if reader.dist is not None:
-            print(f"  ← Distance: {reader.dist:.3f} m  |  Pitch: {reader.pitch:.1f}°")
-        else:
-            print("  ← Waiting for telemetry…")
 
 
 if __name__ == "__main__":
     main()
-
-    def main(args=None):
-    rclpy.init(args=args)
-    node = RobotHeadNode()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
