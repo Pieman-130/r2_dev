@@ -119,7 +119,7 @@ def main():
         reader = TelemetryReader(ser)
         reader.start()
         print("Connected. Commands: enter angle (130-220), 'c' for center, 'q' to quit.\n")
-
+        print("Test code need to update!")
         while True:
             user_in = input("Pitch angle > ").strip().lower()
 
