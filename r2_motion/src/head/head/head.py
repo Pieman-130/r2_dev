@@ -1,213 +1,229 @@
-from rclpy.node import Node
-from geometry_msgs.msg import Quaternion
-from std_msgs.msg import Float32
+"""
+robot_head_controller.py
+Sends servo angle commands and receives telemetry (distance + pitch) from Arduino.
+
+Packet formats:
+  Command  (host → Arduino):  [0xAA, 0x01, angle_byte, xor_checksum]
+  Telemetry (Arduino → host): [0xBB, dist_hi, dist_lo, pitch_hi, pitch_lo, xor_checksum]
+"""
+
+import serial
+import struct
 import time
+import threading
+import numpy as np
+from rclpy.node import Node
 import rclpy
-import busio
-import math
-from board import SCL,SDA
-from adafruit_motor import servo
-from adafruit_pca9685 import PCA9685
+from geometry_msgs.msg import Quaternion
+from std_msgs.msg import Float32, Header
+from sensor_msgs.msg import Range
 
-#pwm channel assignments
-YAW = 13 #0-15 16-channel pwm
-PITCH = 12
-
-#servo specific configs
-PWM_LOW = 500 #micro sec
-PWM_HIGH = 2500 #micro sec
-FREQ = 50
-
+# ── Config ────────────────────────────────────────────────────────────────────
+PORT      = "/dev/servo"      
+BAUD      = 9600
+CMD_HEADER = 0xAA
+CMD_TYPE_ANGLE   = 0x01
+CMD_TYPE_SPEED = 0x02
+TEL_HEADER = 0xBB
+TEL_LEN    = 6          # bytes per telemetry packet
 PUB_RATE = 0.2 #5Hz
 
-class HeadMotion(Node):
+# Servo range matching the Arduino constants
+SERVO_MIN    = 130
+SERVO_MAX    = 220
+SERVO_CENTER = 154
+
+# Pitch angle limits corresponding to servo limits
+PITCH_MIN    = -34   # corresponds to SERVO_MIN 130
+PITCH_MAX    =  96   # corresponds to SERVO_MAX 220
+PITCH_CENTER =   0   # corresponds to SERVO_CENTER 154
+
+class Head(Node):
     '''Node for moving R2's head'''
-    def __init__(self,pub_rate=PUB_RATE):
+    def __init__(self,pub_rate: int = PUB_RATE):
         super().__init__('Head')
       
-        self.head_pos_publisher = self.create_publisher(
-            Quaternion,
-            'head/position',
+        self.head_dist_publisher = self.create_publisher(
+            Range,
+            'head/dist_obj',
             10)
-    
+
+        self.head_pos_publisher = self.create_publisher(
+            Float32,
+            'head/actual_pos',
+            10)
+
         self.head_move_subscriber = self.create_subscription(
-            Quaternion,
-            'r2_move/head_position',
+            Float32,
+            'head/desired_pos',
             self.move_head_callback,
             10)
         
         self.head_speed_subscriber = self.create_subscription(
             Float32,
-            'r2_move/head_speed',
+            'head/desired_spd',
             self.move_head_speed_callback,
             10)
         
-        self.head_pos_timer = self.create_timer(pub_rate, self.pub_head_pos)
+        self.get_logger().info("Head Motion control starting up.")
+        self.ser = serial.Serial(PORT, BAUD, timeout=1)
+        self.ser.reset_input_buffer()
+        self.dist  = None
+        self.pitch = None
+        self.ser_buf  = bytearray() 
 
-        i2c = busio.I2C(SCL,SDA)
-        pca = PCA9685(i2c)
-        pca.frequency = FREQ
-        self.yaw = servo.Servo(pca.channels[YAW], min_pulse=PWM_LOW, max_pulse=PWM_HIGH)
-        self.pitch = servo.Servo(pca.channels[PITCH], min_pulse=PWM_LOW, max_pulse=PWM_HIGH)
+        self.get_logger().debug("Listening for Head telemetry.")
+        self.reader = threading.Thread(target= self.telemetry_reader,daemon=True)
+        self.reader.start()       
+        
+        self.head_pos_timer = self.create_timer(pub_rate, self.pub_head_pos)
+        self.head_dis_timer = self.create_timer(pub_rate, self.pub_head_dis)
 
         self.move_speed = None
-     
-        self.get_logger().info("Head Motion control starting up.")
-        self.get_logger().info("Moving Head to home position of Pitch 145deg and Yaw 95deg")
-     
-        self._set_servos(145,95,self.pitch.angle,self.yaw.angle,0.025) #home position
 
-    def _convert_quat_to_euler(self,quat):
-        x,y,z,w = quat.x,quat.y,quat.z,quat.w
 
-        yaw_rad = math.atan2(2.0 * (w * z + x * y),
-                             1.0 - 2.0 * (y * y + z * z))
+    def telemetry_reader(self):
+        """Reads telemetry from distance sensor and mpu5060 IMU
+        in the background"""
+        while True:
+            chunk = self.ser.read(self.ser.in_waiting or 1)
+            self.ser_buf.extend(chunk)
+
+            # Scan for 0xBB header and extract complete packets
+            while True:
+                idx = self.ser_buf.find(TEL_HEADER)
+                if idx == -1:
+                    self.ser_buf.clear()
+                    break
+                if idx > 0:
+                    del self.ser_buf[:idx]   # discard bytes before header
+
+                if len(self.ser_buf) < TEL_LEN:
+                    break                 # wait for more data
+
+                pkt = bytes(self.ser_buf[:TEL_LEN])
+                del self.ser_buf[:TEL_LEN]
+
+                result = self.parse_telemetry(pkt)
+                if result:
+                    self.dist, self.pitch = result
+    
+
+    def pub_head_pos(self,):
+        msg = Float32()
+        if self.pitch:
+            msg.data = self.pitch
+
+            self.head_pos_publisher.publish(msg)
+            self.get_logger().debug(f"Published Head Position: {msg.data}deg")
+
+
+    def pub_head_dis(self,):
+        msg = Range()
+        #For the VL53L0X https://www.adafruit.com/product/3317
+        msg.radiation_type = 1 #infrared
+        msg.field_of_view = 0.610865 #35deg in rad
+        msg.min_range = 0.10
+        msg.max_range = 1.2
+        if self.dist:
+            msg.range = self.dist
+
+        hdr = Header()
+        hdr.stamp = self.get_clock().now().to_msg()
+        hdr.frame_id = "head"
+        msg.header = hdr
         
-        sinp = 2.0 * (w * y - z * x)
-        if abs(sinp) >= 1:
-            pitch_rad = math.copysign(math.pi / 2, sinp)
-        else:
-            pitch_rad = math.asin(sinp)
-
-        pitch_deg = math.degrees(pitch_rad)
-        yaw_deg = math.degrees(yaw_rad)
-
-        self.get_logger().info(f'Pitch: {pitch_deg:.2f}°, Yaw: {yaw_deg:.2f}°')
-
-        return pitch_deg, yaw_deg
-
-
-    def move_head_speed_callback(self,msg):
-        self.move_speed = -1*msg.data+1 #sets delay for how long to take to move
-        #higher numbers are slower speeds
+        self.head_dist_publisher.publish(msg)
+        self.get_logger().debug(f"Published Head Dist Range: {msg.range}m")
 
 
     def move_head_callback(self, msg):
-        pd, yd = self._convert_quat_to_euler(msg)
+        try:
+            # Clamp pitch to valid range before converting
+            pitch_target = max(PITCH_MIN, min(PITCH_MAX, float(msg.data)))
+            angle = self.pitch_to_servo(pitch_target)
+            cmd = self.build_servo_command(angle)
+            self.ser.write(cmd)
+            self.ser.flush()
 
-        #read current state
-        current_yaw = self.yaw.angle
-        current_pitch = self.pitch.angle
+        except ValueError:
+            self.get_logger().error(f"A pitch value of {msg.data} is not valid")
+
+
+    def move_head_speed_callback(self, msg):
+             try:
+                # Clamp pitch to valid range before converting
+                step_delay = int(msg.data)
+                cmd = self.build_speed_command(step_delay)
+                self.ser.write(cmd)
+                self.ser.flush()
+
+             except ValueError:
+                self.get_logger().error(f"A servo delay value of {msg.data} is not valid")
      
-        #get requested speed
-        if self.move_speed:
-            delay = self.move_speed
-        else: #if not set
-            delay = 0.025 #good marginal speed
 
-        self._set_servos(pd,
-                         yd,
-                         current_pitch,
-                         current_yaw,
-                         delay)
+    def pitch_to_servo(self, pitch_angle: float) -> int:
+        """Map a real pitch angle to a servo value, clamped to safe range."""
+        servo = np.interp(pitch_angle, [PITCH_MIN, PITCH_MAX], [SERVO_MIN, SERVO_MAX])
+        return int(round(servo))
+
+
+    # ── Checksum ──────────────────────────────────────────────────────────────────
+    def xor_checksum(self, data: bytes) -> int:
+        cs = 0
+        for b in data:
+            cs ^= b
+        return cs
+
+
+    # ── Command builder ───────────────────────────────────────────────────────────
+    def build_servo_command(self, angle: int) -> bytes:
+        if angle < SERVO_MIN:
+            angle = SERVO_MIN
+        elif angle > SERVO_MAX:
+            angle = SERVO_MAX
+        payload = bytes([CMD_HEADER, CMD_TYPE_ANGLE, angle])
+        cs = self.xor_checksum(payload)
+        return payload + bytes([cs])
 
     
-    def _set_servos(self,pd,yd,cp,cy,delay):
-        '''set the servo values so they move together
-        in a sort-of-smooth motion'''
-        #correct for small neg values
-        if cp: #None is not set yet
-            if cp < 0:
-                cp = 0
-        else:
-            cp = 0
-        if cy: #None is not set yet
-            if cy < 0:
-                cy = 0
-        else:
-            cy = 0
-
-        #determine number of steps to move both servos
-        dif_y = int(abs(cy - yd))
-        dif_p = int(abs(cp - pd))
-        if dif_y > dif_p: #whichever is largest
-            steps = dif_y
-        else:
-            steps = dif_p
-        try:
-            step_size_y = dif_y/steps #step size dependent for each servo
-        except ZeroDivisionError:
-            step_size_y = 0
-        try:
-            step_size_p = dif_p/steps
-        except ZeroDivisionError:
-            step_size_p = 0
-
-        for s in range(steps):
-            if cp > pd:
-                #next_pitch = step_size_p*s + cp
-                next_pitch = cp - step_size_p*s
-            else:     
-                next_pitch = step_size_p*s + cp 
-                #next_pitch = cp - step_size_p*s
-            
-            #set pitch limits
-            if next_pitch < 100.0:
-                next_pitch = 100.0
-            elif next_pitch > 180.0:
-                next_pitch = 180.0
-            
-            if cy > yd:
-                #next_yaw = step_size_y*s + cy
-                next_yaw = cy - step_size_y*s
-            else:
-                next_yaw = step_size_y*s + cy
-                #next_yaw = cy - step_size_y*s
-
-            #set yaw limits
-            if next_yaw < 5.0:
-                next_yaw = 5.0
-            elif next_yaw > 180.0:
-                next_yaw = 180.0
-         
-            self.pitch.angle = next_pitch
-            self.yaw.angle = next_yaw
-            time.sleep(delay) #slows motion to make it more fluid
-
- 
-    def pub_head_pos(self):
-
-        msg = Quaternion()
-
-        try:
-            yaw_rad = self.yaw.angle*math.pi/180
-            pitch_rad = self.pitch.angle*math.pi/180
-        except TypeError: #Can be none if it was never set before
-            yaw_rad = 0
-            pitch_rad = 0
-
-        self.get_logger().debug(f"Current Yaw: {self.yaw.angle}, Current Pitch: {self.pitch.angle}")
-
-        #convert euler to quaternion
-        cy = math.cos(yaw_rad * 0.5)
-        sy = math.sin(yaw_rad * 0.5)
-        cp = math.cos(pitch_rad * 0.5)
-        sp = math.sin(pitch_rad * 0.5)
-        cr = math.cos(0 * 0.5) #no roll
-        sr = math.sin(0 * 0.5) #no roll
-
-        msg.w = cy * cp * cr + sy * sp * sr
-        msg.x = cy * cp * sr - sy * sp * cr
-        msg.y = sy * cp * sr + cy * sp * cr
-        msg.z = sy * cp * cr - cy * sp * sr
-
-        self.head_pos_publisher.publish(msg)
-        self.get_logger().debug(f"Published Head Position: ({msg.w},{msg.x},{msg.y},{msg.z})")
-    
-
-def main():
-
-    rclpy.init()
-    head = HeadMotion()
-    rclpy.spin(head)
-    rclpy.shutdown()
+    def build_speed_command(self, step_delay: int) -> bytes:
+        """step_delay is SERVO_STEP_DELAY in ms, clamped 1-255."""
+        step_delay = max(1, min(255, step_delay))
+        payload = bytes([CMD_HEADER, CMD_TYPE_SPEED, step_delay])
+        cs = self.xor_checksum(payload)
+        return payload + bytes([cs])
 
 
-if __name__=='__main__':
+    # ── Telemetry parser ──────────────────────────────────────────────────────────
+    def parse_telemetry(self, pkt: bytes):
+        """
+        Returns (distance_m, pitch_deg) or None if checksum fails.
+        pkt must be 6 bytes starting with 0xBB.
+        """
+        if len(pkt) != TEL_LEN or pkt[0] != TEL_HEADER:
+            return None
+        expected_cs = self.xor_checksum(pkt[:5])
+        if pkt[5] != expected_cs:
+            self.get_logger().warn(f"Bad telemetry checksum (got {pkt[5]:02X}, expected {expected_cs:02X})")
+            return None
+        dist_mm   = struct.unpack(">H", pkt[1:3])[0]   # unsigned 16-bit
+        pitch_raw = struct.unpack(">h", pkt[3:5])[0]   # signed 16-bit
+        dist_m    = dist_mm / 1000.0
+        pitch_deg = pitch_raw / 10.0
+        return dist_m, pitch_deg
+
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+def main(args=None):
+    rclpy.init(args=args)
+    head = Head()
+    try:
+        rclpy.spin(head)
+    finally:
+        head.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == "__main__":
     main()
-
-
-
-
-
-
