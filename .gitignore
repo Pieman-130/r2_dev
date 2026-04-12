@@ -37,3 +37,6 @@ r2_motion/src/bno055
 *.deb
 *.yum
 *.dmg
+
+# Data files
+*.wav

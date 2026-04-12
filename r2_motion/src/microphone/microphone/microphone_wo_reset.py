@@ -1,6 +1,5 @@
 import rclpy
 from rclpy.node import Node
-
 from std_msgs.msg import Float32, String
 
 import openwakeword
@@ -11,7 +10,6 @@ from faster_whisper import WhisperModel
 import wave
 import time
 import usb.core
-import subprocess
 
 # -----------------------
 # CONFIG
@@ -31,55 +29,35 @@ MAX_WAIT_FOR_SPEECH = 3.0
 MIN_SPEECH_DURATION = 0.5
 
 # -----------------------
-def find_respeaker_device(p):
-    for i in range(p.get_device_count()):
-        dev = p.get_device_info_by_index(i)
-        if "ReSpeaker" in dev['name'] or "USB Audio" in dev['name']:
-            return i
-    return None
-
-# -----------------------
-class WakeNode(Node):
+class Microphone(Node):
     def __init__(self):
-        super().__init__('wake_node')
+        super().__init__('microhone_node')
 
-        # Publishers
-        self.doa_pub = self.create_publisher(Float32, '/microphone/doa', 10)
-        self.stt_pub = self.create_publisher(String, '/microphone/stt', 10)
+        self.pub_doa = self.create_publisher(Float32, '/microphone/doa', 10)
+        self.pub_stt = self.create_publisher(String, '/microphone/stt', 10)
 
-        self.get_logger().info("Starting ReSpeaker initialization...")
-
-        # 🔥 Step 1: reboot device (fixes garbled audio issue)
-        self.reboot_respeaker()
-
-        # 🔥 Step 2: wait for device to come back
-        if not self.wait_for_respeaker():
-            raise RuntimeError("ReSpeaker failed to reconnect")
-
-        # Wake word + STT
+        # Wake word
         self.oww_model = Model()
+
+        # STT
         self.whisper = WhisperModel("tiny", compute_type="int8")
 
         # Audio
         self.audio = pyaudio.PyAudio()
-        device_index = find_respeaker_device(self.audio)
-
-        if device_index is None:
-            raise RuntimeError("ReSpeaker not found")
-
         self.stream = self.audio.open(
             format=FORMAT,
             channels=CHANNELS,
             rate=RATE,
             input=True,
-            input_device_index=device_index,
-            frames_per_buffer=CHUNK
+            frames_per_buffer=CHUNK,
         )
 
-        self.get_logger().info(f"Audio initialized on device {device_index}")
-
-        # DOA setup
+        # DOA
         self.dev = usb.core.find(idVendor=0x2886, idProduct=0x001A)
+        if self.dev:
+            self.get_logger().debug("Resetting Respeaker USB device.")
+            self.dev.reset()
+            time.sleep(3)
         self.RESID = 20
         self.CMDID = 0x80 | 18
         self.LENGTH = 5
@@ -88,51 +66,13 @@ class WakeNode(Node):
 
         self.timer = self.create_timer(0.01, self.loop)
 
-        self.get_logger().info("Wake node ready")
-
-    # -----------------------
-    def reboot_respeaker(self):
-        self.get_logger().info("Rebooting ReSpeaker...")
-
-        try:
-            subprocess.run(
-                ["python3", 
-                 "/home/adam/r2_dev/r2_motion/src/microphone/microphone/xvf_host.py", 
-                 "REBOOT", 
-                 "--values", 
-                 "1"],
-                check=True
-            )
-        except Exception as e:
-            self.get_logger().error(f"Failed to reboot ReSpeaker: {e}")
-
-        time.sleep(4)
-
-    # -----------------------
-    def wait_for_respeaker(self, timeout=10):
-        start = time.time()
-
-        while time.time() - start < timeout:
-            p = pyaudio.PyAudio()
-            idx = find_respeaker_device(p)
-            p.terminate()
-
-            if idx is not None:
-                self.get_logger().info("ReSpeaker detected")
-                return True
-
-            time.sleep(0.5)
-
-        return False
+        self.get_logger().info("Microphone node started")
 
     # -----------------------
     def get_doa(self):
-        try:
-            data = self.dev.ctrl_transfer(0xC0, 0, self.CMDID, self.RESID, self.LENGTH, timeout=1000)
-            raw = data[1] | (data[2] << 8)
-            return (raw - 270 + 180) % 360 - 180
-        except:
-            return float('nan')
+        data = self.dev.ctrl_transfer(0xC0, 0, self.CMDID, self.RESID, self.LENGTH, timeout=1000)
+        raw = data[1] | (data[2] << 8)
+        return (raw - 270 + 180) % 360 - 180
 
     # -----------------------
     def record_audio_vad(self):
@@ -144,6 +84,7 @@ class WakeNode(Node):
         max_silence_chunks = int(SILENCE_DURATION * RATE / CHUNK)
         max_wait_chunks = int(MAX_WAIT_FOR_SPEECH * RATE / CHUNK)
         min_speech_chunks = int(MIN_SPEECH_DURATION * RATE / CHUNK)
+
         max_record_chunks = int(6.0 * RATE / CHUNK)
 
         recording = False
@@ -215,19 +156,20 @@ class WakeNode(Node):
             doa = self.get_doa()
 
             filename = self.record_audio_vad()
+
             if filename is None:
                 return
 
             segments, _ = self.whisper.transcribe(filename)
             text = " ".join([s.text for s in segments])
 
-            doa_msg = Float32()
-            doa_msg.data = float(doa)
-            self.doa_pub.publish(doa_msg)
+            msg1 = Float32()
+            msg1.data = float(doa)
+            msg2 = String()
+            msg2.data = text
 
-            stt_msg = String()
-            stt_msg.data = text
-            self.stt_pub.publish(stt_msg)
+            self.pub_doa.publish(msg1)
+            self.pub_stt.publish(msg2)
 
             self.get_logger().info(f"DOA: {doa:.1f} | TEXT: {text}")
 
@@ -236,11 +178,10 @@ class WakeNode(Node):
 # -----------------------
 def main(args=None):
     rclpy.init(args=args)
-    node = WakeNode()
+    node = Microphone()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()

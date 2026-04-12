@@ -11,7 +11,6 @@ from faster_whisper import WhisperModel
 import wave
 import time
 import usb.core
-import subprocess
 
 # -----------------------
 # CONFIG
@@ -30,6 +29,8 @@ SILENCE_DURATION = 1.2
 MAX_WAIT_FOR_SPEECH = 3.0
 MIN_SPEECH_DURATION = 0.5
 
+DEAD_AUDIO_THRESHOLD = 5
+
 # -----------------------
 def find_respeaker_device(p):
     for i in range(p.get_device_count()):
@@ -42,41 +43,16 @@ def find_respeaker_device(p):
 class WakeNode(Node):
     def __init__(self):
         super().__init__('wake_node')
-
-        # Publishers
+  
+        # ✅ Publishers
         self.doa_pub = self.create_publisher(Float32, '/microphone/doa', 10)
         self.stt_pub = self.create_publisher(String, '/microphone/stt', 10)
 
-        self.get_logger().info("Starting ReSpeaker initialization...")
-
-        # 🔥 Step 1: reboot device (fixes garbled audio issue)
-        self.reboot_respeaker()
-
-        # 🔥 Step 2: wait for device to come back
-        if not self.wait_for_respeaker():
-            raise RuntimeError("ReSpeaker failed to reconnect")
-
-        # Wake word + STT
         self.oww_model = Model()
         self.whisper = WhisperModel("tiny", compute_type="int8")
 
-        # Audio
-        self.audio = pyaudio.PyAudio()
-        device_index = find_respeaker_device(self.audio)
-
-        if device_index is None:
-            raise RuntimeError("ReSpeaker not found")
-
-        self.stream = self.audio.open(
-            format=FORMAT,
-            channels=CHANNELS,
-            rate=RATE,
-            input=True,
-            input_device_index=device_index,
-            frames_per_buffer=CHUNK
-        )
-
-        self.get_logger().info(f"Audio initialized on device {device_index}")
+        self.audio = None
+        self.stream = None
 
         # DOA setup
         self.dev = usb.core.find(idVendor=0x2886, idProduct=0x001A)
@@ -85,45 +61,65 @@ class WakeNode(Node):
         self.LENGTH = 5
 
         self.trigger_count = 0
-
+        
+        self.start_audio_with_retry()
+      
         self.timer = self.create_timer(0.01, self.loop)
 
-        self.get_logger().info("Wake node ready")
+        self.get_logger().info("Wake node started")
 
     # -----------------------
-    def reboot_respeaker(self):
-        self.get_logger().info("Rebooting ReSpeaker...")
+    def start_audio_with_retry(self):
+        for i in range(5):
+            self.get_logger().info(f"Attempting audio init ({i+1}/5)...")
+            if self.restart_audio():
+                return
+            time.sleep(2)
+
+        raise RuntimeError("Failed to initialize audio")
+
+    # -----------------------
+    def restart_audio(self):
+        self.get_logger().warn("Restarting audio stream...")
+
+        if hasattr(self, "stream") and self.stream:
+            try:
+                self.stream.stop_stream()
+                self.stream.close()
+            except:
+                pass
+
+        if hasattr(self, "audio") and self.audio:
+            try:
+                self.audio.terminate()
+            except:
+                pass
+
+        time.sleep(1)
 
         try:
-            subprocess.run(
-                ["python3", 
-                 "/home/adam/r2_dev/r2_motion/src/microphone/microphone/xvf_host.py", 
-                 "REBOOT", 
-                 "--values", 
-                 "1"],
-                check=True
+            self.audio = pyaudio.PyAudio()
+            device_index = find_respeaker_device(self.audio)
+
+            if device_index is None:
+                self.get_logger().warn("ReSpeaker not found")
+                return False
+
+            self.stream = self.audio.open(
+                format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                input_device_index=device_index,
+                frames_per_buffer=CHUNK
             )
+
+            self.get_logger().info(f"Audio initialized on device {device_index}")
+            return True
+
         except Exception as e:
-            self.get_logger().error(f"Failed to reboot ReSpeaker: {e}")
-
-        time.sleep(4)
-
-    # -----------------------
-    def wait_for_respeaker(self, timeout=10):
-        start = time.time()
-
-        while time.time() - start < timeout:
-            p = pyaudio.PyAudio()
-            idx = find_respeaker_device(p)
-            p.terminate()
-
-            if idx is not None:
-                self.get_logger().info("ReSpeaker detected")
-                return True
-
-            time.sleep(0.5)
-
-        return False
+            self.get_logger().warn(f"Audio init failed: {e}")
+            return False
 
     # -----------------------
     def get_doa(self):
@@ -150,7 +146,11 @@ class WakeNode(Node):
         total_chunks = 0
 
         while True:
-            data = self.stream.read(CHUNK, exception_on_overflow=False)
+            try:
+                data = self.stream.read(CHUNK, exception_on_overflow=False)
+            except:
+                return None
+
             pcm = np.frombuffer(data, dtype=np.int16)
             energy = np.abs(pcm).mean()
 
@@ -197,8 +197,20 @@ class WakeNode(Node):
 
     # -----------------------
     def loop(self):
-        data = self.stream.read(CHUNK, exception_on_overflow=False)
+        try:
+            data = self.stream.read(CHUNK, exception_on_overflow=False)
+        except Exception as e:
+            self.get_logger().warn(f"Stream read failed: {e}")
+            self.restart_audio()
+            return
+
         pcm = np.frombuffer(data, dtype=np.int16)
+        energy = np.abs(pcm).mean()
+
+        if energy < DEAD_AUDIO_THRESHOLD:
+            self.get_logger().warn("Audio appears dead — restarting")
+            self.restart_audio()
+            return
 
         prediction = self.oww_model.predict(pcm)
         score = prediction.get(TARGET, 0)
@@ -221,10 +233,12 @@ class WakeNode(Node):
             segments, _ = self.whisper.transcribe(filename)
             text = " ".join([s.text for s in segments])
 
+            # ✅ Publish DOA
             doa_msg = Float32()
             doa_msg.data = float(doa)
             self.doa_pub.publish(doa_msg)
 
+            # ✅ Publish STT
             stt_msg = String()
             stt_msg.data = text
             self.stt_pub.publish(stt_msg)
@@ -240,7 +254,6 @@ def main(args=None):
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
