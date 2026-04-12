@@ -10,18 +10,21 @@ void setup() {
 }
 
 void loop() {
-    /*
-    for (pos=62; pos<=254; pos+=1){
+    
+    for (pos=0; pos<=110; pos+=1){
         //head.write(pos);
         analogWrite(HEAD, pos);
-        delay(15);
+        delay(50);
     }
-    for (pos=254; pos>=62; pos-=1){
+    delay(5000);
+
+    for (pos=110; pos>=0; pos-=1){
         //head.write(pos);
         analogWrite(HEAD,pos);
-        delay(15);
+        delay(50);
     }
-    */
-   analogWrite(HEAD,160);
+    delay(5000);
+    
+   //analogWrite(HEAD,160);
    //head.write(180);
 }

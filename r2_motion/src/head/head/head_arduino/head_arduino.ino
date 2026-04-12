@@ -7,9 +7,9 @@ const int VL53_addr  = 0x29;  // default VL53L0X address
 const int head       = 9;     // head servo pin D9
 
 // --- Servo Limits ---
-const int up_limit   = 220;   // highest position
-const int down_limit = 130;   // lowest position
-const int straight   = 154;   // center / 0 deg pitch / looking straight forward
+const int up_limit   = 0;   // highest position
+const int down_limit = 170;   // lowest position
+const int straight   = 110;   // center / 0 deg pitch / looking straight forward
 
 // --- Timing ---
 const unsigned long REPORT_INTERVAL  = 200;   // ms between telemetry packets

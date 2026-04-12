@@ -31,7 +31,7 @@ PUB_RATE = 0.2 #5Hz
 # Servo range matching the Arduino constants
 SERVO_MIN    = 130
 SERVO_MAX    = 220
-SERVO_CENTER = 154
+SERVO_CENTER = 175
 
 # Pitch angle limits corresponding to servo limits
 PITCH_MIN    = -34   # corresponds to SERVO_MIN 130
