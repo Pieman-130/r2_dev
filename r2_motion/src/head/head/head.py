@@ -35,8 +35,8 @@ SERVO_CENTER = 175
 
 # Pitch angle limits corresponding to servo limits
 PITCH_MIN    = -34   # corresponds to SERVO_MIN 130
-PITCH_MAX    =  96   # corresponds to SERVO_MAX 220
-PITCH_CENTER =   0   # corresponds to SERVO_CENTER 154
+PITCH_MAX    =  90   # corresponds to SERVO_MAX 220
+PITCH_CENTER =   0   # corresponds to SERVO_CENTER 175
 
 class Head(Node):
     '''Node for moving R2's head'''
@@ -164,7 +164,7 @@ class Head(Node):
 
     def pitch_to_servo(self, pitch_angle: float) -> int:
         """Map a real pitch angle to a servo value, clamped to safe range."""
-        servo = np.interp(pitch_angle, [PITCH_MIN, PITCH_MAX], [SERVO_MIN, SERVO_MAX])
+        servo = np.interp(pitch_angle, [PITCH_MAX, PITCH_MIN], [SERVO_MIN, SERVO_MAX])
         return int(round(servo))
 
 
