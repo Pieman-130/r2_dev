@@ -8,7 +8,7 @@ voices = engine.getProperty('voices')
 for i in range(len(voices)):
 	print(i, voices[i].id, voices[i].name)
 print(len(voices))
-engine.setProperty('rate', 110)
+engine.setProperty('rate', 155)
 engine.setProperty('volume', 1)
 '''
 for i in range(1000):

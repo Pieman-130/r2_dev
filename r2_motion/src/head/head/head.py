@@ -80,7 +80,21 @@ class Head(Node):
         self.head_dis_timer = self.create_timer(pub_rate, self.pub_head_dis)
 
         self.move_speed = None
+        
+        #self.set_home() #keeps head from slamming into initial position
 
+
+    def set_home(self):
+        print("Initial Pitch: ", self.pitch)
+        while True:
+            if self.pitch:
+                start_pitch = Float32()
+                start_pitch.data = self.pitch
+                print("Starting Pitch: ", self.pitch)
+                self.move_head_callback(start_pitch)
+                print("Executing Set Home")
+                break
+        print("HOME IS SET!!!!!!")
 
     def telemetry_reader(self):
         """Reads telemetry from distance sensor and mpu5060 IMU

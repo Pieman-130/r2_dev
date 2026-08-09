@@ -3,7 +3,7 @@ from subprocess import call
 
 def speak_flite(text):
     """Speaks the given text using flite."""
-    subprocess.run(["flite", "-voice", "rms", "-t", text])
+    subprocess.run(["flite", "-voice", "kal", "-t", text])
     #available voices: kal, awb_time, kal16, awb, rms, slt
 
 # Example usage
@@ -17,4 +17,4 @@ call(["amixer", "-D", "pulse", "sset", "Master", "100%"])
 # Toggle mute on master
 #call(["amixer", "-D", "pulse", "sset", "Master", "toggle"])
 
-speak_flite("Hello Morgan.")
+speak_flite("Hello Johnny.  How are you this afternoon?")

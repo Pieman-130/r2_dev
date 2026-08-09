@@ -7,9 +7,9 @@ const int VL53_addr  = 0x29;  // default VL53L0X address
 const int head       = 9;     // head servo pin D9
 
 // --- Servo Limits ---
-const int up_limit   = 0;   // highest position
-const int down_limit = 170;   // lowest position
-const int straight   = 110;   // center / 0 deg pitch / looking straight forward
+const int up_limit   = 100;   // highest position
+const int down_limit = 0;   // lowest position
+const int straight   = 50;   // center / 0 deg pitch / looking straight forward
 
 // --- Timing ---
 const unsigned long REPORT_INTERVAL  = 200;   // ms between telemetry packets
@@ -18,7 +18,7 @@ const unsigned long SERVO_TIMEOUT_MS = 20000; // 20s auto-return to center
 // --- Servo Speed Control ---
 int SERVO_STEP_DELAY = 15;  // ms between each step (higher = slower)
 const int SERVO_STEP_SIZE  = 1;   // servo units per step (higher = faster)
-int targetServoVal = straight;    // where we want to get to
+int targetServoVal;    // where we want to get to
 
 // --- Packet Protocol ---
 // Command packet (host → Arduino): [0xAA, 0x01, angle_byte, checksum]
@@ -31,7 +31,7 @@ const byte CMD_TYPE_SPEED = 0x02;
 const byte TEL_HEADER    = 0xBB;
 
 float pitch = 0.0;
-int   currentServoVal = straight;
+int   currentServoVal;
 unsigned long lastCmdTime    = 0;
 unsigned long lastReportTime = 0;
 
@@ -53,7 +53,8 @@ void setup() {
   distSensor.startContinuous();
 
   pinMode(head, OUTPUT);
-  analogWrite(head, straight);
+  updateServo();
+  //analogWrite(head, straight);
 
   Serial.begin(9600);
 }

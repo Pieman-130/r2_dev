@@ -24,7 +24,7 @@ def stream_tts(text):
     data = {
         "model": "tts-1",  # or "tts-1-hd"
         "input": text,
-        "voice": "nova"   # Choose from "alloy", "echo", "fable", "onyx", "nova", "shimmer"
+        "voice": "fable"   # Choose from "alloy", "echo", "fable", "onyx", "nova", "shimmer"
     }
 
     response = requests.post(url, headers=headers, json=data, stream=True)
