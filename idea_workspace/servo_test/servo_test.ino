@@ -1,26 +1,24 @@
+#include <Servo.h>
 
-const int head       = 9;   
-
+Servo myServo;  // Create a servo object
 
 void setup() {
-    Serial.begin(9600);
+  myServo.attach(10);  // Attach the servo on pin 9
 }
 
 void loop() {
 
-    Serial.println("Enter Value: ");
-    while (Serial.available() == 0) {
-        
-    }
-    set_servo();
-}
-
-void set_servo() {
-    if (Serial.available() > 0) {
-        int serVal = Serial.parseInt();
-
-        analogWrite(head, serVal);
-        Serial.print("Servo moved to: ");
-        Serial.println(serVal);
-    }
+  //myServo.write(90);   // Move to 0 degrees
+  //delay(1000);        // Wait 1 second
+  
+  //myServo.write(90);  // Move to 90 degrees (middle)
+  //delay(1000);        // Wait 1 second
+  
+  //myServo.write(90); // Move to 180 degrees
+  //delay(1000);        // Wait 1 second
+  
+  myServo.write(90); // Move to 180 degrees
+  delay(1000);        // Wait 1 second 
+  myServo.detach();
+ //myServo.write(0);
 }
