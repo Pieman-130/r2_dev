@@ -2503,7 +2503,7 @@
         <mxCell id="mpTLdDFG6vt_qExH-u1Q-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Servo 1" vertex="1">
           <mxGeometry height="60" width="120" x="580" y="670" as="geometry" />
         </mxCell>
-        <mxCell id="mpTLdDFG6vt_qExH-u1Q-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Servo 2" vertex="1">
+        <mxCell id="mpTLdDFG6vt_qExH-u1Q-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Servo 2&lt;div&gt;Pan&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="120" x="580" y="600" as="geometry" />
         </mxCell>
         <mxCell id="mpTLdDFG6vt_qExH-u1Q-14" edge="1" parent="1" source="mpTLdDFG6vt_qExH-u1Q-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=blockThin;startFill=1;endArrow=none;endFill=0;" target="mpTLdDFG6vt_qExH-u1Q-13" value="Blk/Red&lt;div&gt;JST&amp;nbsp;&lt;/div&gt;">
@@ -2725,10 +2725,10 @@
             <mxPoint x="490" y="440" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="meBNHRXvyH9qham8OgRN-26" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="D13" vertex="1">
+        <mxCell id="meBNHRXvyH9qham8OgRN-26" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="D10" vertex="1">
           <mxGeometry height="30" width="60" x="650" y="510" as="geometry" />
         </mxCell>
-        <mxCell id="meBNHRXvyH9qham8OgRN-27" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="D12" vertex="1">
+        <mxCell id="meBNHRXvyH9qham8OgRN-27" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="D11" vertex="1">
           <mxGeometry height="30" width="60" x="650" y="540" as="geometry" />
         </mxCell>
         <mxCell id="meBNHRXvyH9qham8OgRN-28" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="GND" vertex="1">
