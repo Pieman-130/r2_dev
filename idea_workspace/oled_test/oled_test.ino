@@ -1,75 +1,54 @@
+#include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
+#define OLED_RESET    -1   // Set to -1 if sharing Arduino reset pin
+#define SCREEN_ADDRESS 0x3C // Common addr; try 0x3D if this doesn't work
 
-// OLED reset pin. Most I2C OLEDs don't have one.
-#define OLED_RESET -1
-
-// Common I2C address is 0x3C
-#define SCREEN_ADDRESS 0x3C
-
-Adafruit_SSD1306 display(
-  SCREEN_WIDTH,
-  SCREEN_HEIGHT,
-  &Wire,
-  OLED_RESET
-);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 void setup() {
   Serial.begin(115200);
 
-  // Initialize OLED
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println("OLED initialization failed!");
-    while (true);
+    Serial.println(F("SSD1306 allocation failed"));
+    while (true); // halt
   }
 
-  Serial.println("OLED initialized!");
-
-  // Clear display
   display.clearDisplay();
 
-  // Text settings
+  // Text test
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
-
-  display.println("OLED TEST");
-  display.println();
-  display.println("128 x 64");
-  display.println("I2C working!");
-
-  // Actually send the buffer to the OLED
+  display.println("SSD1306 OLED Test");
+  display.println("128x64");
   display.display();
+  delay(2000);
 
+  // Shape test
+  display.clearDisplay();
+  display.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SSD1306_WHITE);
+  display.fillCircle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 15, SSD1306_WHITE);
+  display.display();
   delay(2000);
 }
 
 void loop() {
-  // Draw a simple animation
+  // Scrolling text demo
+  static int x = SCREEN_WIDTH;
   display.clearDisplay();
-
   display.setTextSize(2);
-  display.setCursor(10, 5);
-  display.println("HELLO!");
-
-  display.setTextSize(1);
-  display.setCursor(20, 35);
-  display.println("OLED is working");
-
-  // Draw a rectangle around the screen
-  display.drawRect(0, 0, 128, 64, SSD1306_WHITE);
-
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(x, 24);
+  display.print("Hello!");
   display.display();
 
-  delay(500);
+  x -= 2;
+  if (x < -80) x = SCREEN_WIDTH;
 
-  // Invert the display
-  display.invertDisplay(true);
-  delay(500);
-
-  display.invertDisplay(false);
+  delay(30);
 }
