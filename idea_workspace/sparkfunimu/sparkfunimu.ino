@@ -1,56 +1,63 @@
 
 #include <Wire.h>
-#include "ICM_20948.h"
-
-#define WIRE_PORT Wire
-#define AD0_VAL 1   // Default SparkFun breakout has AD0 pulled high (address 0x69). Set to 0 if you've jumpered it low (0x68).
+#include <ICM_20948.h>   // SparkFun ICM-20948 Arduino library
 
 ICM_20948_I2C myICM;
 
+unsigned long lastPrint = 0;
+const unsigned long PRINT_INTERVAL_MS = 100;  // 10 Hz, readable on the monitor
+
 void setup() {
   Serial.begin(115200);
-  while (!Serial); // Wait for Leonardo's native USB serial
+  while (!Serial) {}
 
-  WIRE_PORT.begin();
-  WIRE_PORT.setClock(400000);
+  Wire.begin();
+  Wire.setClock(400000);
 
-  bool initialized = false;
-  while (!initialized) {
-    myICM.begin(WIRE_PORT, AD0_VAL);
-
-    Serial.print(F("Initialization status: "));
-    Serial.println(myICM.statusString());
-
-    if (myICM.status != ICM_20948_Stat_Ok) {
-      Serial.println(F("Trying again..."));
-      delay(500);
+  bool ok = false;
+  while (!ok) {
+    myICM.begin(Wire, 1);  // 1 = AD0 pulled high; use 0 if AD0 is low
+    if (myICM.status == ICM_20948_Stat_Ok) {
+      ok = true;
     } else {
-      initialized = true;
+      Serial.println("IMU init failed, retrying...");
+      delay(500);
     }
   }
 
-  Serial.println(F("ICM-20948 connected!"));
+  Serial.println("IMU test ready.");
+  Serial.println("Tilt the robot by hand and watch which values move.");
+  Serial.println("accelPitch/accelRoll use accel only (noisy but no drift).");
+  Serial.println();
 }
 
 void loop() {
   if (myICM.dataReady()) {
-    myICM.getAGMT(); // reads accel, gyro, mag, temp into myICM.agmt
+    myICM.getAGMT();
 
-    Serial.print("Acc (mg) [");
-    Serial.print(myICM.accX(), 1); Serial.print(", ");
-    Serial.print(myICM.accY(), 1); Serial.print(", ");
-    Serial.print(myICM.accZ(), 1);
-    Serial.print("]  Gyro (DPS) [");
-    Serial.print(myICM.gyrX(), 1); Serial.print(", ");
-    Serial.print(myICM.gyrY(), 1); Serial.print(", ");
-    Serial.print(myICM.gyrZ(), 1);
-    Serial.print("]  Mag (uT) [");
-    Serial.print(myICM.magX(), 1); Serial.print(", ");
-    Serial.print(myICM.magY(), 1); Serial.print(", ");
-    Serial.print(myICM.magZ(), 1);
-    Serial.print("]  Temp (C) ");
-    Serial.println(myICM.temp(), 1);
+    if (millis() - lastPrint >= PRINT_INTERVAL_MS) {
+      lastPrint = millis();
 
-    delay(50);
+      float ax = myICM.accX();
+      float ay = myICM.accY();
+      float az = myICM.accZ();
+      float gx = myICM.gyrX();
+      float gy = myICM.gyrY();
+      float gz = myICM.gyrZ();
+
+      // Two independent tilt estimates from accel alone — use these to
+      // figure out which axis pair corresponds to "falling forward/back"
+      float pitchFromXZ = atan2(ax, az) * 180.0 / PI;
+      float pitchFromYZ = atan2(ay, az) * 180.0 / PI;
+
+      Serial.print("accX="); Serial.println(ax, 2);
+      Serial.print(" accY="); Serial.print(ay, 2);
+      Serial.print(" accZ="); Serial.print(az, 2);
+      Serial.print(" | gyrX="); Serial.print(gx, 2);
+      Serial.print(" gyrY=");   Serial.print(gy, 2);
+     Serial.print(" gyrZ=");   Serial.print(gz, 2);
+      Serial.print(" | pitch(x,z)="); Serial.print(pitchFromXZ, 1);
+      Serial.print(" pitch(y,z)=");   Serial.println(pitchFromYZ, 1);
+    }
   }
 }
