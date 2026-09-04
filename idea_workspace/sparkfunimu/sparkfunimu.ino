@@ -7,31 +7,23 @@ ICM_20948_I2C imu;
 #define AD0_VAL 1
 
 // --------------------------------------------------
-// Filter parameters
+// Filter settings
 // --------------------------------------------------
 
 const float ALPHA = 0.98;
-
-// Number of gyro samples used for startup calibration
-const int GYRO_CALIBRATION_SAMPLES = 500;
-
+const int CALIBRATION_SAMPLES = 500;
 
 // --------------------------------------------------
-// Gyro calibration
+// State
 // --------------------------------------------------
 
 float gyroYBias = 0.0;
-
-
-// --------------------------------------------------
-// Filter state
-// --------------------------------------------------
-
 float filteredPitch = 0.0;
 
-unsigned long previousTime = 0;
+float previousPitchRate = 0.0;
 
-unsigned long guardTime = millis();
+unsigned long lastMicros = 0;
+unsigned long recordingStartMs = 0;
 
 // --------------------------------------------------
 // Setup
@@ -40,70 +32,32 @@ unsigned long guardTime = millis();
 void setup()
 {
   Serial.begin(115200);
-
-  // Give USB serial time to initialize
   delay(1000);
+
+  Serial.println();
+  Serial.println("Starting ICM-20948...");
 
   Wire.begin();
   Wire.setClock(400000);
 
-  Serial.println();
-  Serial.println("ICM-20948 Pitch Filter");
-  Serial.println("======================");
-
-  // Initialize IMU
-  imu.begin(Wire, AD0_VAL);
-
-  if (imu.status != ICM_20948_Stat_Ok)
+  while (imu.begin(Wire, AD0_VAL) != ICM_20948_Stat_Ok)
   {
-    Serial.print("IMU initialization failed: ");
-    Serial.println(imu.statusString());
-
-    while (1)
-    {
-      delay(1000);
-    }
+    Serial.println("IMU initialization failed.");
+    delay(500);
   }
 
   Serial.println("IMU initialized.");
   Serial.println();
 
-  // ------------------------------------------------
-  // Gyro calibration
-  // ------------------------------------------------
+  // -----------------------------------------------
+  // Calibrate gyro
+  // -----------------------------------------------
 
-  Serial.println("Keep robot completely still.");
-  Serial.println("Calibrating gyro...");
+  calibrateGyro();
 
-  float gyroSum = 0.0;
-
-  int samples = 0;
-
-  while (samples < GYRO_CALIBRATION_SAMPLES)
-  {
-    if (imu.dataReady())
-    {
-      imu.getAGMT();
-
-      gyroSum += imu.gyrY();
-
-      samples++;
-
-      delay(2);
-    }
-  }
-
-  gyroYBias = gyroSum / GYRO_CALIBRATION_SAMPLES;
-
-  Serial.print("Gyro Y bias: ");
-  Serial.print(gyroYBias, 4);
-  Serial.println(" deg/s");
-
-  Serial.println();
-
-  // ------------------------------------------------
-  // Initialize pitch from accelerometer
-  // ------------------------------------------------
+  // -----------------------------------------------
+  // Wait for first valid sample
+  // -----------------------------------------------
 
   while (!imu.dataReady())
   {
@@ -115,19 +69,71 @@ void setup()
   float ax = imu.accX();
   float az = imu.accZ();
 
-  filteredPitch =
-    atan2(ax, az) * 180.0 / PI;
+  // Establish initial pitch from accelerometer
+  filteredPitch = atan2(-ax, az) * 180.0 / PI;
 
-  previousTime = micros();
-
-  Serial.println("Filter running.");
   Serial.println();
-  Serial.println("AccelPitch   GyroRate   FilteredPitch");
-  Serial.println("-------------------------------------");
+  Serial.print("Gyro Y bias: ");
+  Serial.print(gyroYBias, 4);
+  Serial.println(" deg/s");
 
- 
+  Serial.print("Initial pitch: ");
+  Serial.print(filteredPitch, 3);
+  Serial.println(" deg");
+
+  Serial.println();
+  Serial.println("==========================================");
+  Serial.println("READY FOR DYNAMIC TEST");
+  Serial.println("==========================================");
+  Serial.println();
+  Serial.println("Place robot upright and stable.");
+  Serial.println("Then press any key in Serial Monitor");
+  Serial.println("to begin recording.");
+  Serial.println();
+
+  // -----------------------------------------------
+  // Wait for user to start test
+  // -----------------------------------------------
+
+  while (!Serial.available())
+  {
+    // Keep waiting
+  }
+
+  // Clear input
+  while (Serial.available())
+  {
+    Serial.read();
+  }
+
+  // -----------------------------------------------
+  // Re-zero pitch immediately before test
+  // -----------------------------------------------
+
+  while (!imu.dataReady())
+  {
+    delay(1);
+  }
+
+  imu.getAGMT();
+
+  ax = imu.accX();
+  az = imu.accZ();
+
+  filteredPitch = atan2(-ax, az) * 180.0 / PI;
+
+  previousPitchRate = 0.0;
+
+  lastMicros = micros();
+  recordingStartMs = millis();
+
+  Serial.println();
+  Serial.println("RECORDING STARTED");
+  Serial.println("Push robot forward, then release.");
+  Serial.println("Let it oscillate until it settles.");
+  Serial.println();
+  Serial.println("time_ms,pitch,pitchRate,angularAccel,accelPitch");
 }
-
 
 // --------------------------------------------------
 // Main loop
@@ -136,75 +142,122 @@ void setup()
 void loop()
 {
   if (!imu.dataReady())
+  {
     return;
+  }
 
   imu.getAGMT();
 
-  // ------------------------------------------------
-  // Calculate time step
-  // ------------------------------------------------
+  unsigned long nowMicros = micros();
 
-  unsigned long currentTime = micros();
+  float dt = (nowMicros - lastMicros) / 1000000.0;
 
-  float dt =
-    (currentTime - previousTime) / 1000000.0;
+  lastMicros = nowMicros;
 
-  previousTime = currentTime;
-
-  // Protect against unreasonable time steps
+  // Ignore invalid timing intervals
   if (dt <= 0.0 || dt > 0.1)
+  {
     return;
+  }
 
-
-  // ------------------------------------------------
-  // Accelerometer pitch
-  // ------------------------------------------------
+  // -----------------------------------------------
+  // Accelerometer
+  // -----------------------------------------------
 
   float ax = imu.accX();
   float az = imu.accZ();
 
   float accelPitch =
-    atan2(ax, az) * 180.0 / PI;
+      atan2(-ax, az) * 180.0 / PI;
 
+  // -----------------------------------------------
+  // Gyroscope
+  // -----------------------------------------------
 
-  // ------------------------------------------------
-  // Gyroscope pitch rate
+  float gyroY = imu.gyrY();
+
+  // Positive pitch = robot tilting backward
+  // Negative pitch = robot tilting forward
   //
-  // Positive = rotating toward forward pitch
-  // ------------------------------------------------
+  // Physical gyro sign is opposite our pitch convention.
 
-  float gyroRate =
-    -(imu.gyrY() - gyroYBias);
+  float pitchRate =
+      -(gyroY - gyroYBias);
 
-
-  // ------------------------------------------------
-  // Integrate gyro
-  // ------------------------------------------------
+  // -----------------------------------------------
+  // Complementary filter
+  // -----------------------------------------------
 
   float gyroPitch =
-    filteredPitch + gyroRate * dt;
-
-
-  // ------------------------------------------------
-  // Complementary filter
-  // ------------------------------------------------
+      filteredPitch + pitchRate * dt;
 
   filteredPitch =
-    ALPHA * gyroPitch +
-    (1.0 - ALPHA) * accelPitch;
+      ALPHA * gyroPitch +
+      (1.0 - ALPHA) * accelPitch;
 
+  // -----------------------------------------------
+  // Angular acceleration
+  // -----------------------------------------------
 
-  // ------------------------------------------------
-  // Output
-  // ------------------------------------------------
-  if (millis() - guardTime > 500){
-  Serial.print(accelPitch, 2);
-  Serial.print("       ");
+  float angularAccel =
+      (pitchRate - previousPitchRate) / dt;
 
-  Serial.print(gyroRate, 2);
-  Serial.print("       ");
+  previousPitchRate = pitchRate;
 
-  Serial.println(filteredPitch, 2);
-  guardTime = millis();
+  // -----------------------------------------------
+  // Telemetry
+  // -----------------------------------------------
+
+  unsigned long elapsedMs =
+      millis() - recordingStartMs;
+
+  Serial.print(elapsedMs);
+  Serial.print(",");
+
+  Serial.print(filteredPitch, 3);
+  Serial.print(",");
+
+  Serial.print(pitchRate, 3);
+  Serial.print(",");
+
+  Serial.print(angularAccel, 3);
+  Serial.print(",");
+
+  Serial.println(accelPitch, 3);
+}
+
+// --------------------------------------------------
+// Gyro calibration
+// --------------------------------------------------
+
+void calibrateGyro()
+{
+  Serial.println("GYRO CALIBRATION");
+  Serial.println("-----------------");
+  Serial.println("Keep the robot COMPLETELY STILL.");
+  Serial.println("Calibration will begin in 2 seconds.");
+
+  delay(2000);
+
+  float sum = 0.0;
+  int samples = 0;
+
+  Serial.println("Calibrating...");
+
+  while (samples < CALIBRATION_SAMPLES)
+  {
+    if (imu.dataReady())
+    {
+      imu.getAGMT();
+
+      sum += imu.gyrY();
+
+      samples++;
+    }
   }
+
+  gyroYBias =
+      sum / CALIBRATION_SAMPLES;
+
+  Serial.println("Calibration complete.");
 }
