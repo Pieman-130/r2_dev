@@ -19,16 +19,49 @@ unsigned long lastMicros = 0;
 
 
 // ============================================================
-// BALANCE CONTROL TEST
+// MOTOR PINS
 // ============================================================
 
-// This is intentionally just a test gain.
-// It is NOT a tuned balance gain.
+const int LEFT_PWM_PIN  = 9;
+const int RIGHT_PWM_PIN = 10;
 
-const float Kp = 2.0;
+const int LEFT_DIR_PIN  = 5;
+const int RIGHT_DIR_PIN = 4;
 
-// Maximum hypothetical motor command.
-const int MAX_COMMAND = 51;
+
+// ============================================================
+// BALANCE CONTROLLER
+// ============================================================
+
+// Proportional gain
+const float Kp = 1.0;
+
+// Gyro damping gain
+const float Kd = 0.15;
+
+// Small region around upright where the controller
+// does not command the motors.
+const float PITCH_DEADBAND = 1.0;
+
+// Conservative maximum motor command.
+const int MAX_PWM = 20;
+
+
+// ============================================================
+// MOTOR SLEW LIMITING
+// ============================================================
+
+const int PWM_STEP = 1;
+
+int currentLeftPWM = 0;
+int currentRightPWM = 0;
+
+int targetLeftPWM = 0;
+int targetRightPWM = 0;
+
+unsigned long lastMotorUpdate = 0;
+
+const unsigned long MOTOR_UPDATE_INTERVAL = 10;
 
 
 // ============================================================
@@ -41,16 +74,29 @@ void setup()
   delay(1000);
 
   Serial.println();
-  Serial.println("Balance Control Direction Test");
-  Serial.println("--------------------------------");
+  Serial.println("PD BALANCE TEST");
+  Serial.println("---------------");
   Serial.println();
+
+  // ----------------------------------------------------------
+  // Motor setup
+  // ----------------------------------------------------------
+
+  pinMode(LEFT_PWM_PIN, OUTPUT);
+  pinMode(RIGHT_PWM_PIN, OUTPUT);
+
+  pinMode(LEFT_DIR_PIN, OUTPUT);
+  pinMode(RIGHT_DIR_PIN, OUTPUT);
+
+  analogWrite(LEFT_PWM_PIN, 0);
+  analogWrite(RIGHT_PWM_PIN, 0);
+
+  // ----------------------------------------------------------
+  // IMU setup
+  // ----------------------------------------------------------
 
   Wire.begin();
   Wire.setClock(400000);
-
-  // ----------------------------------------------------------
-  // Initialize IMU
-  // ----------------------------------------------------------
 
   while (imu.begin(Wire, AD0_VAL) != ICM_20948_Stat_Ok)
   {
@@ -62,7 +108,7 @@ void setup()
   Serial.println();
 
   // ----------------------------------------------------------
-  // Calibrate gyro
+  // Gyro calibration
   // ----------------------------------------------------------
 
   calibrateGyro();
@@ -89,15 +135,17 @@ void setup()
   Serial.println(" degrees");
 
   Serial.println();
-  Serial.println("Motors are DISABLED.");
+  Serial.println("PD controller active.");
+  Serial.println("Motors limited to 20 PWM.");
+  Serial.println("Keep robot restrained in fixture.");
   Serial.println();
-  Serial.println("Expected behavior:");
-  Serial.println("  Forward tilt  (negative pitch) -> positive command");
-  Serial.println("  Backward tilt (positive pitch) -> negative command");
-  Serial.println();
-  Serial.println("time_ms,pitch,pitchRate,accelPitch,command");
+
+  Serial.println(
+    "time_ms,pitch,pitchRate,accelPitch,command"
+  );
 
   lastMicros = micros();
+  lastMotorUpdate = millis();
 }
 
 
@@ -107,6 +155,10 @@ void setup()
 
 void loop()
 {
+  // ----------------------------------------------------------
+  // Wait for fresh IMU data
+  // ----------------------------------------------------------
+
   if (!imu.dataReady())
   {
     return;
@@ -161,22 +213,56 @@ void loop()
     (1.0 - ALPHA) * accelPitch;
 
 
-  // ----------------------------------------------------------
-  // Calculate hypothetical balance command
-  // ----------------------------------------------------------
+  // ==========================================================
+  // PD BALANCE CONTROLLER
+  // ==========================================================
 
-  // Negative pitch = falling forward
-  // Therefore command should be positive (forward).
+  float balanceCommand = 0.0;
 
-  float balanceCommand =
-    -Kp * filteredPitch;
+  if (filteredPitch > PITCH_DEADBAND ||
+      filteredPitch < -PITCH_DEADBAND)
+  {
+    balanceCommand =
+      Kp * filteredPitch +
+      Kd * pitchRate;
+  }
 
   balanceCommand =
     constrain(
       balanceCommand,
-      -MAX_COMMAND,
-      MAX_COMMAND
+      -MAX_PWM,
+      MAX_PWM
     );
+
+  targetLeftPWM = (int)balanceCommand;
+  targetRightPWM = (int)balanceCommand;
+
+
+  // ----------------------------------------------------------
+  // Update motors
+  // ----------------------------------------------------------
+
+  if (millis() - lastMotorUpdate >= MOTOR_UPDATE_INTERVAL)
+  {
+    lastMotorUpdate = millis();
+
+    currentLeftPWM =
+      approach(
+        currentLeftPWM,
+        targetLeftPWM,
+        PWM_STEP
+      );
+
+    currentRightPWM =
+      approach(
+        currentRightPWM,
+        targetRightPWM,
+        PWM_STEP
+      );
+
+    setMotorLeft(currentLeftPWM);
+    setMotorRight(currentRightPWM);
+  }
 
 
   // ----------------------------------------------------------
@@ -192,6 +278,89 @@ void loop()
   Serial.print(accelPitch, 3);
   Serial.print(",");
   Serial.println(balanceCommand, 3);
+}
+
+
+// ============================================================
+// LEFT MOTOR
+// ============================================================
+
+void setMotorLeft(int pwm)
+{
+  pwm = constrain(pwm, -MAX_PWM, MAX_PWM);
+
+  if (pwm > 0)
+  {
+    // Positive = robot forward
+    digitalWrite(LEFT_DIR_PIN, HIGH);
+    analogWrite(LEFT_PWM_PIN, pwm);
+  }
+  else if (pwm < 0)
+  {
+    // Negative = robot reverse
+    digitalWrite(LEFT_DIR_PIN, LOW);
+    analogWrite(LEFT_PWM_PIN, -pwm);
+  }
+  else
+  {
+    analogWrite(LEFT_PWM_PIN, 0);
+  }
+}
+
+
+// ============================================================
+// RIGHT MOTOR
+// ============================================================
+
+void setMotorRight(int pwm)
+{
+  pwm = constrain(pwm, -MAX_PWM, MAX_PWM);
+
+  if (pwm > 0)
+  {
+    // Positive = robot forward
+    digitalWrite(RIGHT_DIR_PIN, LOW);
+    analogWrite(RIGHT_PWM_PIN, pwm);
+  }
+  else if (pwm < 0)
+  {
+    // Negative = robot reverse
+    digitalWrite(RIGHT_DIR_PIN, HIGH);
+    analogWrite(RIGHT_PWM_PIN, -pwm);
+  }
+  else
+  {
+    analogWrite(RIGHT_PWM_PIN, 0);
+  }
+}
+
+
+// ============================================================
+// SLEW RATE LIMITER
+// ============================================================
+
+int approach(int current, int target, int amount)
+{
+  if (current < target)
+  {
+    current += amount;
+
+    if (current > target)
+    {
+      current = target;
+    }
+  }
+  else if (current > target)
+  {
+    current -= amount;
+
+    if (current < target)
+    {
+      current = target;
+    }
+  }
+
+  return current;
 }
 
 
