@@ -6,7 +6,7 @@ import csv
 PORT = "/dev/ttyACM0"
 BAUD = 115200
 
-OUTPUT_FILE = "motor_response_short_pulses.csv"
+OUTPUT_FILE = "motor_deadband_test.csv"
 
 COMMAND_INTERVAL = 0.10
 
@@ -129,6 +129,20 @@ def set_command(command, left, right):
 
 
 # ============================================================
+# HOLD COMMAND
+# ============================================================
+
+def hold_command(command, value, duration):
+
+    set_command(command, value, value)
+
+    start = time.monotonic()
+
+    while time.monotonic() - start < duration:
+        time.sleep(0.01)
+
+
+# ============================================================
 # RUN TEST
 # ============================================================
 
@@ -136,21 +150,21 @@ def run_test(command):
 
     print()
     print("========================================")
-    print("       SHORT MOTOR PULSE TEST")
+    print("          MOTOR DEADBAND TEST")
     print("========================================")
     print()
-    print("Make sure the robot is secured so that")
-    print("it can pitch forward safely.")
+    print("IMPORTANT:")
     print()
-    print("Sequence:")
+    print("Secure the robot in the fixture.")
+    print("Keep clear of the wheels.")
     print()
-    print("  5 sec   stationary")
-    print("  0.25 s  forward")
-    print("  5 sec   stationary")
-    print("  0.25 s  forward")
-    print("  5 sec   stationary")
+    print("The test will step through:")
     print()
-    print("Motor command: +25 / +25")
+    print("  +2, +4, +6 ... +20")
+    print("  then")
+    print("  -2, -4, -6 ... -20")
+    print()
+    print("Each command is held for 1.5 seconds.")
     print()
 
     input("Press ENTER when ready...")
@@ -169,43 +183,61 @@ def run_test(command):
     print()
 
     # --------------------------------------------------------
-    # Initial stationary period
+    # Initial stop
     # --------------------------------------------------------
 
     set_command(command, 0, 0)
 
     print("Stationary")
-    time.sleep(5)
+    time.sleep(2)
 
     # --------------------------------------------------------
-    # Pulse 1
+    # Positive direction
     # --------------------------------------------------------
 
-    print("FORWARD PULSE 1")
+    print()
+    print("========================================")
+    print("POSITIVE COMMANDS")
+    print("========================================")
 
-    set_command(command, 25, 25)
+    for value in range(2, 22, 2):
 
-    time.sleep(0.25)
+        print(f"Command +{value}")
+
+        hold_command(command, value, 1.5)
+
+        set_command(command, 0, 0)
+
+        time.sleep(0.5)
+
+    # --------------------------------------------------------
+    # Stop
+    # --------------------------------------------------------
 
     set_command(command, 0, 0)
 
+    print()
     print("STOP")
-    time.sleep(5)
+    time.sleep(2)
 
     # --------------------------------------------------------
-    # Pulse 2
+    # Negative direction
     # --------------------------------------------------------
 
-    #print("FORWARD PULSE 2")
+    print()
+    print("========================================")
+    print("NEGATIVE COMMANDS")
+    print("========================================")
 
-    #set_command(command, 25, 25)
+    for value in range(2, 22, 2):
 
-    #time.sleep(0.25)
+        print(f"Command -{value}")
 
-    #set_command(command, 0, 0)
+        hold_command(command, -value, 1.5)
 
-    #print("STOP")
-    #time.sleep(5)
+        set_command(command, 0, 0)
+
+        time.sleep(0.5)
 
     # --------------------------------------------------------
     # Final stop
@@ -214,7 +246,9 @@ def run_test(command):
     set_command(command, 0, 0)
 
     print()
+    print("========================================")
     print("TEST COMPLETE")
+    print("========================================")
 
 
 # ============================================================
