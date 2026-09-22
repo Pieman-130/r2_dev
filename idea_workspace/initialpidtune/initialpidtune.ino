@@ -50,7 +50,7 @@ int currentRightMotor = 0;
 // ============================================================
 
 float Kp = 2.0;
-float Kd = 0.30;
+float Kd = 0.00;
 float Ki = 0.0;
 
 
