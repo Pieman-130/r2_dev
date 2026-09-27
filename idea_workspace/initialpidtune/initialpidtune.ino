@@ -50,7 +50,7 @@ int currentRightMotor = 0;
 // ============================================================
 
 float Kp = 2.0;
-float Kd = 0.00;
+float Kd = 0.30;
 float Ki = 0.0;
 
 
@@ -428,23 +428,24 @@ void setup()
   // CSV HEADER
   // ----------------------------------------------------------
 
-  Serial.println(
-    "time_ms,"
-    "pitch,"
-    "pitchRate,"
-    "rawGyroY,"
-    "gyroMin,"
-    "gyroMax,"
-    "gyroAvg,"
-    "gyroRange,"
-    "accelPitch,"
-    "controllerOutput,"
-    "targetMotor,"
-    "currentMotor,"
-    "balanceEnabled,"
-    "balanceFault,"
-    "faultCode"
-  );
+ Serial.println(
+  "time_ms,"
+  "pitch,"
+  "pitchRate,"
+  "rawGyroY,"
+  "gyroMin,"
+  "gyroMax,"
+  "gyroAvg,"
+  "gyroRange,"
+  "accelPitch,"
+  "controllerOutput,"
+  "targetMotor,"
+  "currentLeftMotor,"
+  "currentRightMotor,"
+  "balanceEnabled,"
+  "balanceFault,"
+  "faultCode"
+);
 }
 
 
@@ -586,50 +587,52 @@ void loop()
     // Output CSV
     // --------------------------------------------------------
 
-    Serial.print(now);
-    Serial.print(",");
+Serial.print(now);
+Serial.print(",");
 
-    Serial.print(pitch, 3);
-    Serial.print(",");
+Serial.print(pitch, 3);
+Serial.print(",");
 
-    Serial.print(pitchRate, 3);
-    Serial.print(",");
+Serial.print(pitchRate, 3);
+Serial.print(",");
 
-    Serial.print(rawGyroY, 3);
-    Serial.print(",");
+Serial.print(rawGyroY, 3);
+Serial.print(",");
 
-    Serial.print(gyroMin, 3);
-    Serial.print(",");
+Serial.print(gyroMin, 3);
+Serial.print(",");
 
-    Serial.print(gyroMax, 3);
-    Serial.print(",");
+Serial.print(gyroMax, 3);
+Serial.print(",");
 
-    Serial.print(gyroAvg, 3);
-    Serial.print(",");
+Serial.print(gyroAvg, 3);
+Serial.print(",");
 
-    Serial.print(gyroRange, 3);
-    Serial.print(",");
+Serial.print(gyroRange, 3);
+Serial.print(",");
 
-    Serial.print(accelPitch, 3);
-    Serial.print(",");
+Serial.print(accelPitch, 3);
+Serial.print(",");
 
-    Serial.print(controllerOutput, 3);
-    Serial.print(",");
+Serial.print(controllerOutput, 3);
+Serial.print(",");
 
-    Serial.print(targetMotor);
-    Serial.print(",");
+Serial.print(targetMotor);
+Serial.print(",");
 
-    Serial.print(currentLeftMotor);
-    Serial.print(",");
+Serial.print(currentLeftMotor);
+Serial.print(",");
 
-    Serial.print(balanceEnabled ? 1 : 0);
-    Serial.print(",");
+Serial.print(currentRightMotor);
+Serial.print(",");
 
-    Serial.print(balanceFault ? 1 : 0);
-    Serial.print(",");
+Serial.print(balanceEnabled ? 1 : 0);
+Serial.print(",");
 
-    Serial.println(faultCode);
+Serial.print(balanceFault ? 1 : 0);
+Serial.print(",");
 
+Serial.println(faultCode);
     // --------------------------------------------------------
     // Start a new statistics window
     // --------------------------------------------------------

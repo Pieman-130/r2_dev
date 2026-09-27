@@ -168,9 +168,12 @@ class SensorRead(Node):
     def lt_rpm_calbk(self):
         msg = Float32()
         data = self.current_sensor_data['lt_hall_sensor']
-
+        print(data)
         if data or data == 0.0:
             if data > 0.0:
+                rpm = 1/((data/1000000)*90)*60
+            elif data < 0.0:
+                #rpm = 0.0
                 rpm = 1/((data/1000000)*90)*60
             else:
                 rpm = 0.0
