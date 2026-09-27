@@ -102,13 +102,13 @@ def encoder_to_rpm(value):
 
     Equivalent to approximately:
 
-        RPM = 666,666.67 / data
+        RPM = 666,666.6667 / data
     """
 
     if value <= 0:
         return 0.0
 
-    return 6666666.6667 / value
+    return 666666.6667 / value
 
 
 # ============================================================
