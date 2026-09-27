@@ -10,6 +10,8 @@ OUTPUT_FILE = "motor_response_short_pulses.csv"
 
 COMMAND_INTERVAL = 0.10
 
+COMMAND_LEN = 5.0
+
 
 # ============================================================
 # CRC-8
@@ -145,9 +147,9 @@ def run_test(command):
     print("Sequence:")
     print()
     print("  5 sec   stationary")
-    print("  0.25 s  forward")
+    print(f"  {COMMAND_LEN} s  forward")
     print("  5 sec   stationary")
-    print("  0.25 s  forward")
+    print(f"  {COMMAND_LEN} s  forward")
     print("  5 sec   stationary")
     print()
     print("Motor command: +25 / +25")
@@ -185,7 +187,7 @@ def run_test(command):
 
     set_command(command, 25, 25)
 
-    time.sleep(0.25)
+    time.sleep(COMMAND_LEN)
 
     set_command(command, 0, 0)
 
