@@ -43,3 +43,4 @@ r2_motion/src/bno055
 # Data files
 *.wav
 *.csv
+*.txt
