@@ -163,6 +163,10 @@ volatile uint8_t previousPortB = 0;
 //
 // D6 = left Hall
 // D7 = right Hall
+//
+// IMPORTANT:
+// The Hall SC signal has 90 TRANSITIONS per wheel revolution.
+// Therefore BOTH rising and falling edges count.
 // ============================================================
 
 ISR(PCINT2_vect) {
@@ -184,30 +188,34 @@ ISR(PCINT2_vect) {
     bool high =
         currentPortD & _BV(PD6);
 
+
+    // Every edge is a Hall transition.
+    if (leftHallInitialized) {
+
+      uint32_t period =
+          now - leftLastTransitionUs;
+
+      if (period > 0) {
+        leftPeriodUs = period;
+      }
+    }
+
+    leftLastTransitionUs = now;
+
+    leftTransitionCount++;
+
+    leftHallInitialized = true;
+
+
+    // Rising edge starts HIGH pulse measurement.
     if (high) {
 
-      // Rising edge
-
-      if (leftHallInitialized) {
-
-        uint32_t period =
-            now - leftLastTransitionUs;
-
-        if (period > 0) {
-          leftPeriodUs = period;
-        }
-      }
-
       leftHighStartUs = now;
-      leftLastTransitionUs = now;
 
-      leftTransitionCount++;
+    }
 
-      leftHallInitialized = true;
-
-    } else {
-
-      // Falling edge
+    // Falling edge ends HIGH pulse measurement.
+    else {
 
       if (leftHighStartUs != 0) {
 
@@ -227,30 +235,34 @@ ISR(PCINT2_vect) {
     bool high =
         currentPortD & _BV(PD7);
 
+
+    // Every edge is a Hall transition.
+    if (rightHallInitialized) {
+
+      uint32_t period =
+          now - rightLastTransitionUs;
+
+      if (period > 0) {
+        rightPeriodUs = period;
+      }
+    }
+
+    rightLastTransitionUs = now;
+
+    rightTransitionCount++;
+
+    rightHallInitialized = true;
+
+
+    // Rising edge starts HIGH pulse measurement.
     if (high) {
 
-      // Rising edge
-
-      if (rightHallInitialized) {
-
-        uint32_t period =
-            now - rightLastTransitionUs;
-
-        if (period > 0) {
-          rightPeriodUs = period;
-        }
-      }
-
       rightHighStartUs = now;
-      rightLastTransitionUs = now;
 
-      rightTransitionCount++;
+    }
 
-      rightHallInitialized = true;
-
-    } else {
-
-      // Falling edge
+    // Falling edge ends HIGH pulse measurement.
+    else {
 
       if (rightHighStartUs != 0) {
 

@@ -10,7 +10,7 @@ OUTPUT_FILE = "motor_response_short_pulses.csv"
 
 COMMAND_INTERVAL = 0.10
 
-COMMAND_LEN = 5.0
+COMMAND_LEN = 180.0
 
 
 # ============================================================
@@ -176,8 +176,8 @@ def run_test(command):
 
     set_command(command, 0, 0)
 
-    print("Stationary")
-    time.sleep(5)
+    #print("Stationary")
+    #time.sleep(5)
 
     # --------------------------------------------------------
     # Pulse 1
