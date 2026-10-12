@@ -45,6 +45,140 @@ int currentLeftMotor = 0;
 int currentRightMotor = 0;
 
 
+
+// ============================================================
+// WHEEL ENCODERS
+//
+// D0 = right wheel SC
+// D7 = left wheel SC
+//
+// The SC signal changes state 90 times per wheel revolution.
+// We measure every rising/falling transition.
+//
+// The SC signal itself contains no direction information.
+// For diagnostic signed RPM, the current motor-command sign
+// is applied to the measured magnitude.
+// ============================================================
+
+const int RIGHT_HALL_PIN = 0;
+const int LEFT_HALL_PIN  = 7;
+
+const uint32_t HALL_TRANSITIONS_PER_REV = 90;
+const uint32_t HALL_TIMEOUT_US = 1000000UL;
+
+volatile uint32_t rightLastTransitionUs = 0;
+volatile uint32_t leftLastTransitionUs = 0;
+volatile uint32_t rightPeriodUs = 0;
+volatile uint32_t leftPeriodUs = 0;
+volatile uint32_t rightTransitionCount = 0;
+volatile uint32_t leftTransitionCount = 0;
+volatile bool rightHallInitialized = false;
+volatile bool leftHallInitialized = false;
+
+uint32_t rightStartCount = 0;
+uint32_t leftStartCount = 0;
+
+float rightRPM = 0.0;
+float leftRPM = 0.0;
+float rightSignedRPM = 0.0;
+float leftSignedRPM = 0.0;
+
+
+void rightHallISR()
+{
+  uint32_t now = micros();
+
+  if (rightHallInitialized)
+  {
+    uint32_t period = now - rightLastTransitionUs;
+
+    if (period > 0)
+      rightPeriodUs = period;
+  }
+
+  rightLastTransitionUs = now;
+  rightTransitionCount++;
+  rightHallInitialized = true;
+}
+
+
+void leftHallISR()
+{
+  uint32_t now = micros();
+
+  if (leftHallInitialized)
+  {
+    uint32_t period = now - leftLastTransitionUs;
+
+    if (period > 0)
+      leftPeriodUs = period;
+  }
+
+  leftLastTransitionUs = now;
+  leftTransitionCount++;
+  leftHallInitialized = true;
+}
+
+
+void updateWheelMeasurements()
+{
+  uint32_t nowUs = micros();
+
+  uint32_t rPeriod;
+  uint32_t lPeriod;
+  uint32_t rLast;
+  uint32_t lLast;
+
+  noInterrupts();
+
+  rPeriod = rightPeriodUs;
+  lPeriod = leftPeriodUs;
+  rLast = rightLastTransitionUs;
+  lLast = leftLastTransitionUs;
+
+  interrupts();
+
+  if (rPeriod > 0 &&
+      (uint32_t)(nowUs - rLast) <= HALL_TIMEOUT_US)
+  {
+    rightRPM =
+      60000000.0 /
+      ((float)rPeriod * HALL_TRANSITIONS_PER_REV);
+  }
+  else
+  {
+    rightRPM = 0.0;
+  }
+
+  if (lPeriod > 0 &&
+      (uint32_t)(nowUs - lLast) <= HALL_TIMEOUT_US)
+  {
+    leftRPM =
+      60000000.0 /
+      ((float)lPeriod * HALL_TRANSITIONS_PER_REV);
+  }
+  else
+  {
+    leftRPM = 0.0;
+  }
+
+  // Diagnostic signed velocity only.
+  if (currentRightMotor > 0)
+    rightSignedRPM = rightRPM;
+  else if (currentRightMotor < 0)
+    rightSignedRPM = -rightRPM;
+  else
+    rightSignedRPM = 0.0;
+
+  if (currentLeftMotor > 0)
+    leftSignedRPM = leftRPM;
+  else if (currentLeftMotor < 0)
+    leftSignedRPM = -leftRPM;
+  else
+    leftSignedRPM = 0.0;
+}
+
+
 // ============================================================
 // BALANCE CONTROLLER
 // ============================================================
@@ -376,6 +510,26 @@ void setup()
   pinMode(LEFT_DIR_PIN, OUTPUT);
   pinMode(RIGHT_DIR_PIN, OUTPUT);
 
+  // Wheel Hall inputs
+  pinMode(RIGHT_HALL_PIN, INPUT);
+  pinMode(LEFT_HALL_PIN, INPUT);
+
+  uint32_t encoderInitTime = micros();
+  rightLastTransitionUs = encoderInitTime;
+  leftLastTransitionUs = encoderInitTime;
+
+  attachInterrupt(
+    digitalPinToInterrupt(RIGHT_HALL_PIN),
+    rightHallISR,
+    CHANGE
+  );
+
+  attachInterrupt(
+    digitalPinToInterrupt(LEFT_HALL_PIN),
+    leftHallISR,
+    CHANGE
+  );
+
   stopMotors();
 
   // ----------------------------------------------------------
@@ -414,6 +568,12 @@ void setup()
   // Start a fresh gyro statistics window
   resetGyroStats();
 
+  // Zero wheel position at startup.
+  noInterrupts();
+  rightStartCount = rightTransitionCount;
+  leftStartCount = leftTransitionCount;
+  interrupts();
+
   Serial.println("================================");
   Serial.println("BALANCE CONTROLLER READY");
   Serial.println("================================");
@@ -444,7 +604,17 @@ void setup()
   "currentRightMotor,"
   "balanceEnabled,"
   "balanceFault,"
-  "faultCode"
+  "faultCode,"
+  "rightRPM,"
+  "leftRPM,"
+  "rightSignedRPM,"
+  "leftSignedRPM,"
+  "rightTransitionCount,"
+  "leftTransitionCount,"
+  "rightPositionTransitions,"
+  "leftPositionTransitions,"
+  "rightPeriodUs,"
+  "leftPeriodUs"
 );
 }
 
@@ -557,6 +727,10 @@ void loop()
   setMotorLeft(currentLeftMotor);
   setMotorRight(currentRightMotor);
 
+  // Update wheel measurements using the current motor command
+  // direction for diagnostic signed RPM.
+  updateWheelMeasurements();
+
   // ----------------------------------------------------------
   // Telemetry
   // ----------------------------------------------------------
@@ -632,7 +806,45 @@ Serial.print(",");
 Serial.print(balanceFault ? 1 : 0);
 Serial.print(",");
 
-Serial.println(faultCode);
+Serial.print(faultCode);
+Serial.print(",");
+
+Serial.print(rightRPM, 3);
+Serial.print(",");
+
+Serial.print(leftRPM, 3);
+Serial.print(",");
+
+Serial.print(rightSignedRPM, 3);
+Serial.print(",");
+
+Serial.print(leftSignedRPM, 3);
+Serial.print(",");
+
+noInterrupts();
+uint32_t telemetryRightCount = rightTransitionCount;
+uint32_t telemetryLeftCount = leftTransitionCount;
+uint32_t telemetryRightPeriod = rightPeriodUs;
+uint32_t telemetryLeftPeriod = leftPeriodUs;
+interrupts();
+
+Serial.print(telemetryRightCount);
+Serial.print(",");
+
+Serial.print(telemetryLeftCount);
+Serial.print(",");
+
+Serial.print(telemetryRightCount - rightStartCount);
+Serial.print(",");
+
+Serial.print(telemetryLeftCount - leftStartCount);
+Serial.print(",");
+
+Serial.print(telemetryRightPeriod);
+Serial.print(",");
+
+Serial.println(telemetryLeftPeriod);
+
     // --------------------------------------------------------
     // Start a new statistics window
     // --------------------------------------------------------
