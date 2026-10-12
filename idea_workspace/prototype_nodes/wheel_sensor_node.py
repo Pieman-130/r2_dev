@@ -6,7 +6,7 @@ import serial
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32, Int32
+from std_msgs.msg import Float32, Float64, Int32
 
 
 PORT = "/dev/SENS0"
@@ -19,6 +19,11 @@ class WheelSensorNode(Node):
 
     def __init__(self):
         super().__init__("wheel_sensor")
+
+        self.encoder_initialized = False
+        
+        self.start_right_count = 0
+        self.start_left_count = 0
 
         # ROS topics
         self.right_rpm_pub = self.create_publisher(
@@ -35,6 +40,22 @@ class WheelSensorNode(Node):
 
         self.left_encoder_pub = self.create_publisher(
             Int32, "/wheel/left_encoder", 10
+        )
+
+        self.right_position_pub = self.create_publisher(
+            Float64, "/wheel/right_position", 10
+        )
+
+        self.left_position_pub = self.create_publisher(
+            Float64, "/wheel/left_position", 10
+        )
+
+        self.right_velocity_pub = self.create_publisher(
+            Float64, "/wheel/right_velocity", 10
+        )
+
+        self.left_velocity_pub = self.create_publisher(
+            Float64, "/wheel/left_velocity", 10
         )
 
         # Open sensor serial port
@@ -220,7 +241,6 @@ class WheelSensorNode(Node):
 
     def process_wheel_packet(self, packet):
 
-        # Payload begins at byte 4.
         payload = packet[4:40]
 
         (
@@ -235,10 +255,48 @@ class WheelSensorNode(Node):
             left_age_ms
         ) = struct.unpack("<9I", payload)
 
+        if not self.encoder_initialized:
+            self.start_right_count = right_count
+            self.start_left_count = left_count
+            self.encoder_initialized = True
+
+        right_relative_count = right_count - self.start_right_count
+        left_relative_count = left_count - self.start_left_count
+
         right_rpm = right_rpm_x100 / 100.0
         left_rpm = left_rpm_x100 / 100.0
 
-        # Publish RPM
+        # ---------------------------------------------------------
+        # Encoder position
+        #
+        # 90 Hall transitions = 1 wheel revolution
+        # ---------------------------------------------------------
+
+        right_position = (
+            right_count *
+            (2.0 * 3.141592653589793) /
+            WHEEL_TRANSITIONS_PER_REV
+        )
+
+        left_position = (
+            left_count *
+            (2.0 * 3.141592653589793) /
+            WHEEL_TRANSITIONS_PER_REV
+        )
+
+        # ---------------------------------------------------------
+        # Wheel angular velocity
+        #
+        # RPM -> rad/s
+        # ---------------------------------------------------------
+
+        right_velocity = right_rpm * (2.0 * 3.141592653589793) / 60.0
+        left_velocity = left_rpm * (2.0 * 3.141592653589793) / 60.0
+
+        # ---------------------------------------------------------
+        # Existing RPM topics
+        # ---------------------------------------------------------
+
         right_rpm_msg = Float32()
         right_rpm_msg.data = right_rpm
         self.right_rpm_pub.publish(right_rpm_msg)
@@ -247,7 +305,10 @@ class WheelSensorNode(Node):
         left_rpm_msg.data = left_rpm
         self.left_rpm_pub.publish(left_rpm_msg)
 
-        # Publish cumulative transition counts
+        # ---------------------------------------------------------
+        # Existing encoder count topics
+        # ---------------------------------------------------------
+
         right_count_msg = Int32()
         right_count_msg.data = right_count
         self.right_encoder_pub.publish(right_count_msg)
@@ -256,18 +317,47 @@ class WheelSensorNode(Node):
         left_count_msg.data = left_count
         self.left_encoder_pub.publish(left_count_msg)
 
-        # Periodic diagnostic output
+        # ---------------------------------------------------------
+        # New position topics
+        # ---------------------------------------------------------
+
+        right_position_msg = Float64()
+        right_position_msg.data = right_position
+        self.right_position_pub.publish(right_position_msg)
+
+        left_position_msg = Float64()
+        left_position_msg.data = left_position
+        self.left_position_pub.publish(left_position_msg)
+
+        # ---------------------------------------------------------
+        # New velocity topics
+        # ---------------------------------------------------------
+
+        right_velocity_msg = Float64()
+        right_velocity_msg.data = right_velocity
+        self.right_velocity_pub.publish(right_velocity_msg)
+
+        left_velocity_msg = Float64()
+        left_velocity_msg.data = left_velocity
+        self.left_velocity_pub.publish(left_velocity_msg)
+
+        # ---------------------------------------------------------
+        # Diagnostic output
+        # ---------------------------------------------------------
+
         now = time.monotonic()
 
         if now - self.last_report >= 1.0:
 
             self.get_logger().info(
-                f"Wheel packets: {self.wheel_packets} | "
-                f"Right: {right_rpm:.2f} RPM "
-                f"count={right_count} | "
-                f"Left: {left_rpm:.2f} RPM "
-                f"count={left_count} | "
-                f"Bad packets: {self.bad_packets}"
+                f"Packets: {self.wheel_packets} | "
+                f"R: {right_rpm:.2f} RPM, "
+                f"{right_velocity:.3f} rad/s, "
+                f"pos={right_position:.3f} rad | "
+                f"L: {left_rpm:.2f} RPM, "
+                f"{left_velocity:.3f} rad/s, "
+                f"pos={left_position:.3f} rad | "
+                f"Bad: {self.bad_packets}"
             )
 
             self.last_report = now
