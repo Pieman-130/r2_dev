@@ -100,11 +100,19 @@ unsigned long lastCommandTime = 0;
 // MOTOR COMMAND STATE
 // ============================================================
 
-int currentLeft = 0;
-int currentRight = 0;
+// Command values exactly as received from the serial packet.
+// These are in the Python-side -100..+100 command scale.
+int receivedLeftCommand = 0;
+int receivedRightCommand = 0;
 
+// Target motor values after converting the -100..+100 command
+// scale to the actual -51..+51 PWM range.
 int targetLeft = 0;
 int targetRight = 0;
+
+// Actual PWM command currently being applied after ramping.
+int currentLeft = 0;
+int currentRight = 0;
 
 const unsigned long TELEMETRY_INTERVAL_MS = 50;
 unsigned long lastTelemetryTime = 0;
@@ -309,8 +317,12 @@ void setup()
     "pitch,"
     "pitchRate,"
     "accelPitch,"
-    "currentLeft,"
-    "currentRight,"
+    "receivedLeftCommand,"
+    "receivedRightCommand,"
+    "targetLeftPWM,"
+    "targetRightPWM,"
+    "currentLeftPWM,"
+    "currentRightPWM,"
     "rightRPM,"
     "leftRPM,"
     "rightSignedRPM,"
@@ -407,6 +419,14 @@ void readIMU()
     Serial.print(",");
     Serial.print(accelPitch, 3);
     Serial.print(",");
+    Serial.print(receivedLeftCommand);
+    Serial.print(",");
+    Serial.print(receivedRightCommand);
+    Serial.print(",");
+    Serial.print(targetLeft);
+    Serial.print(",");
+    Serial.print(targetRight);
+    Serial.print(",");
     Serial.print(currentLeft);
     Serial.print(",");
     Serial.print(currentRight);
@@ -452,6 +472,8 @@ void updateMotors()
   {
     targetLeft = 0;
     targetRight = 0;
+    receivedLeftCommand = 0;
+    receivedRightCommand = 0;
   }
 
   // Gradually move current command toward target.
@@ -521,6 +543,10 @@ void setMotorRight(int command)
 //
 // CMD = 0x01
 // LEFT / RIGHT = signed int8, -100 to +100
+//
+// The packet command scale is -100..+100.
+// MAX_PWM is 51, so the decoded command is explicitly
+// scaled to the actual -51..+51 PWM range.
 // ============================================================
 
 void processSerial()
@@ -571,24 +597,30 @@ void processSerial()
         int left = (int8_t)buffer[4];
         int right = (int8_t)buffer[5];
 
+        // Record exactly what arrived in the packet.
+        receivedLeftCommand = constrain(left, -100, 100);
+        receivedRightCommand = constrain(right, -100, 100);
+
+        // Convert the -100..+100 protocol command to the
+        // actual -MAX_PWM..+MAX_PWM motor command.
         targetLeft =
           constrain(
-            map(abs(left), 0, 100, 0, MAX_PWM),
+            map(abs(receivedLeftCommand), 0, 100, 0, MAX_PWM),
             0,
             MAX_PWM
           );
 
         targetRight =
           constrain(
-            map(abs(right), 0, 100, 0, MAX_PWM),
+            map(abs(receivedRightCommand), 0, 100, 0, MAX_PWM),
             0,
             MAX_PWM
           );
 
-        if (left < 0)
+        if (receivedLeftCommand < 0)
           targetLeft = -targetLeft;
 
-        if (right < 0)
+        if (receivedRightCommand < 0)
           targetRight = -targetRight;
 
         lastCommandTime = millis();

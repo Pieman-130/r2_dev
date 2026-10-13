@@ -10,16 +10,20 @@ PORT = "/dev/ttyACM0"
 BAUD = 115200
 
 COMMAND_INTERVAL = 0.10
-#OUTPUT_FILE = f"r2_manual_encoder_test_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
 OUTPUT_FILE = f"r2_manual_encoder_test.csv"
+
 # Leonardo telemetry fields
 FIELDS = [
     "time_ms",
     "pitch",
     "pitchRate",
     "accelPitch",
-    "currentLeft",
-    "currentRight",
+    "receivedLeftCommand",
+    "receivedRightCommand",
+    "targetLeftPWM",
+    "targetRightPWM",
+    "currentLeftPWM",
+    "currentRightPWM",
     "rightRPM",
     "leftRPM",
     "rightSignedRPM",
@@ -109,16 +113,20 @@ def telemetry_reader(ser, records, running):
                     float(parts[3]),
                     int(parts[4]),
                     int(parts[5]),
-                    float(parts[6]),
-                    float(parts[7]),
-                    float(parts[8]),
-                    float(parts[9]),
-                    int(parts[10]),
-                    int(parts[11]),
-                    int(parts[12]),
-                    int(parts[13]),
+                    int(parts[6]),
+                    int(parts[7]),
+                    int(parts[8]),
+                    int(parts[9]),
+                    float(parts[10]),
+                    float(parts[11]),
+                    float(parts[12]),
+                    float(parts[13]),
                     int(parts[14]),
                     int(parts[15]),
+                    int(parts[16]),
+                    int(parts[17]),
+                    int(parts[18]),
+                    int(parts[19]),
                 ]
 
                 records.append(row)
@@ -140,9 +148,11 @@ def print_latest(records):
     print(
         f"\r"
         f"pitch={r[1]:7.2f}°  "
-        f"cmd={r[4]:4d}/{r[5]:4d}  "
-        f"RPM R/L={r[6]:6.2f}/{r[7]:6.2f}  "
-        f"counts R/L={r[10]:5d}/{r[11]:5d}",
+        f"rx={r[4]:4d}/{r[5]:4d}  "
+        f"target={r[6]:3d}/{r[7]:3d}  "
+        f"PWM={r[8]:3d}/{r[9]:3d}  "
+        f"RPM R/L={r[10]:6.2f}/{r[11]:6.2f}  "
+        f"counts R/L={r[14]:5d}/{r[15]:5d}",
         end="",
         flush=True,
     )
