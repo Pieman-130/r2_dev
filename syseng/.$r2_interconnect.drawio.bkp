@@ -2500,7 +2500,7 @@
         <mxCell id="mpTLdDFG6vt_qExH-u1Q-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Right Eye Display" vertex="1">
           <mxGeometry height="60" width="120" x="580" y="250" as="geometry" />
         </mxCell>
-        <mxCell id="mpTLdDFG6vt_qExH-u1Q-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Servo 1" vertex="1">
+        <mxCell id="mpTLdDFG6vt_qExH-u1Q-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Servo 1&lt;div&gt;Tilt&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="120" x="580" y="670" as="geometry" />
         </mxCell>
         <mxCell id="mpTLdDFG6vt_qExH-u1Q-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Servo 2&lt;div&gt;Pan&lt;/div&gt;" vertex="1">
