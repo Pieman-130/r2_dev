@@ -68,6 +68,13 @@ void setup()
   analogWrite(LEFT_PWM_PIN, 0);
   analogWrite(RIGHT_PWM_PIN, 0);
 
+  pinMode(11, INPUT);
+  pinMode(12, INPUT);
+  pinMode(13, INPUT);
+  pinMode(21, INPUT);
+  pinMode(22, INPUT);
+  pinMode(23, INPUT);
+
   // IMU
   Wire.begin();
   Wire.setClock(400000);

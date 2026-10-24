@@ -10,7 +10,7 @@ OUTPUT_FILE = "motor_response_short_pulses.csv"
 
 COMMAND_INTERVAL = 0.10
 
-COMMAND_LEN = 180.0
+COMMAND_LEN = 5.0
 
 
 # ============================================================
@@ -183,16 +183,33 @@ def run_test(command):
     # Pulse 1
     # --------------------------------------------------------
 
-    print("FORWARD PULSE 1")
+    print("RIGHT only 25")
 
-    set_command(command, 25, 25)
+    set_command(command, 0, 25)
 
     time.sleep(COMMAND_LEN)
 
     set_command(command, 0, 0)
 
     print("STOP")
-    time.sleep(5)
+    time.sleep(2)
+
+    print("LEFTonly 25")
+
+    set_command(command, 25, 0)
+
+    time.sleep(COMMAND_LEN)
+
+    set_command(command, 0, 0)
+
+    print("STOP")
+    time.sleep(2)
+
+    print("REV PULSE 1")
+
+    set_command(command, -25, -25)
+
+    time.sleep(COMMAND_LEN) 
 
     # --------------------------------------------------------
     # Pulse 2
