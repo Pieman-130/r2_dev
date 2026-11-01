@@ -846,7 +846,6 @@ Serial.print(",");
 Serial.println(telemetryLeftPeriod);
 
     // --------------------------------------------------------
-    // Start a new statistics window
     // --------------------------------------------------------
 
     resetGyroStats();

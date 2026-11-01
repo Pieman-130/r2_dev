@@ -1,5 +1,5 @@
 /*
-  R2 balance controller with Hall-derived wheel velocity telemetry
+  R2 balance controller with Hall-derived wheel velocity telemetry — V4 diagnostics
   Board: Arduino Leonardo / ATmega32U4
 
   IMPORTANT:
@@ -23,6 +23,8 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <stdio.h>
+#include <string.h>
 #include "ICM_20948.h"
 
 ICM_20948_I2C imu;
@@ -182,27 +184,170 @@ float leftVelocityFiltered = 0.0f, rightVelocityFiltered = 0.0f;
 uint8_t leftVelocityMode = 0, rightVelocityMode = 0; // 0 stale, 1 period, 2 count fallback
 unsigned long leftTransitionAgeMs = 0, rightTransitionAgeMs = 0;
 
-// -------------------- Telemetry / timing / gyro stats --------------------
-unsigned long lastTelemetryTime = 0;
-const unsigned long TELEMETRY_INTERVAL = 50UL;
-unsigned long lastIMUTime = 0;
-float gyroMin = 999999.0f;
-float gyroMax = -999999.0f;
-float gyroSum = 0.0f;
-unsigned long gyroSampleCount = 0;
+// -------------------- High-resolution diagnostics --------------------
+// Diagnostic records are buffered and transmitted in small non-blocking chunks.
+// No Serial.print() calls are made from the IMU/control update path.
+const uint8_t DIAG_QUEUE_SIZE = 10;
+// Emit one diagnostic record for every three successful IMU updates (~99 Hz
+// when the IMU is updating near 296 Hz). Balance control still runs on EVERY update.
+const uint8_t DIAG_DECIMATION = 3;
+uint8_t diagnosticDecimationCounter = 0;
+uint8_t imuUpdatesSinceDiagnostic = 0;
+uint32_t totalIMUUpdates = 0;
+uint32_t lastDiagnosticEnqueueUs = 0;
+uint32_t diagnosticIntervalUs = 0;
+uint8_t diagnosticRecordsSinceSummary = 0;
+const uint8_t DIAGNOSTICS_PER_SUMMARY = 10;
+struct DiagnosticSample {
+  uint32_t sequence;
+  uint32_t timestampUs;
+  uint32_t dtUs;
+  float rawGyroY;
+  float gyroBias;
+  float pitchRate;
+  float accelPitch;
+  float pitch;
+  float pTerm;
+  float dTerm;
+  float unsaturatedOutput;
+  float controllerOutput;
+  int16_t targetMotor;
+  int16_t leftMotor;
+  int16_t rightMotor;
+  uint8_t balanceEnabled;
+  uint8_t faultCode;
+  uint16_t imuUpdatesInWindow;
+  uint32_t totalIMUUpdates;
+  uint8_t imuUpdatesSinceDiagnostic;
+  uint32_t diagnosticIntervalUs;
+};
+DiagnosticSample diagQueue[DIAG_QUEUE_SIZE];
+uint8_t diagHead = 0, diagTail = 0, diagCount = 0;
+uint32_t diagSequence = 0;
+uint32_t diagQueueDrops = 0;
+uint32_t lastIMUTime = 0;
+uint32_t currentIMUTimestampUs = 0;
+uint32_t currentIMUDtUs = 0;
+uint16_t imuUpdatesInWindow = 0;
+float currentPTerm = 0.0f;
+float currentDTerm = 0.0f;
+float currentUnsaturatedOutput = 0.0f;
 
-void resetGyroStats() {
-  gyroMin = 999999.0f;
-  gyroMax = -999999.0f;
-  gyroSum = 0.0f;
-  gyroSampleCount = 0;
+// Slower Hall/velocity summary, emitted every 250 ms when the diagnostic
+// stream has room. Summary records are lower priority than IMU samples.
+unsigned long lastSummaryTime = 0;
+const unsigned long SUMMARY_INTERVAL_MS = 250UL;
+char summaryLine[220];
+bool summaryPending = false;
+uint32_t summaryDrops = 0;
+
+// One partially transmitted CSV line. It is sent only as USB CDC space allows.
+char txLine[220];
+uint16_t txLength = 0;
+uint16_t txOffset = 0;
+
+void enqueueDiagnosticSample(float pitch, float pitchRate, float rawGyroY,
+                             float accelPitch, float controllerOutput,
+                             int targetMotor) {
+  ++diagSequence; // Sequence gaps reveal samples dropped when the queue is full.
+  if (diagCount >= DIAG_QUEUE_SIZE) {
+    ++diagQueueDrops;
+    return;
+  }
+  DiagnosticSample &d = diagQueue[diagHead];
+  d.sequence = diagSequence;
+  d.timestampUs = currentIMUTimestampUs;
+  d.dtUs = currentIMUDtUs;
+  d.rawGyroY = rawGyroY;
+  d.gyroBias = gyroYBias;
+  d.pitchRate = pitchRate;
+  d.accelPitch = accelPitch;
+  d.pitch = pitch;
+  d.pTerm = currentPTerm;
+  d.dTerm = currentDTerm;
+  d.unsaturatedOutput = currentUnsaturatedOutput;
+  d.controllerOutput = controllerOutput;
+  d.targetMotor = targetMotor;
+  d.leftMotor = currentLeftMotor;
+  d.rightMotor = currentRightMotor;
+  d.balanceEnabled = balanceEnabled ? 1 : 0;
+  d.faultCode = (uint8_t)faultCode;
+  d.imuUpdatesInWindow = imuUpdatesInWindow;
+  d.totalIMUUpdates = totalIMUUpdates;
+  d.imuUpdatesSinceDiagnostic = imuUpdatesSinceDiagnostic;
+  d.diagnosticIntervalUs = diagnosticIntervalUs;
+  diagHead = (diagHead + 1) % DIAG_QUEUE_SIZE;
+  ++diagCount;
 }
 
-void updateGyroStats(float value) {
-  if (value < gyroMin) gyroMin = value;
-  if (value > gyroMax) gyroMax = value;
-  gyroSum += value;
-  ++gyroSampleCount;
+void prepareNextTransmitLine() {
+  if (txLength != 0) return;
+
+  // Prevent Hall summaries from being starved by the continuous D-record stream.
+  // If a summary is waiting, send one after at most ten D records.
+  bool sendSummaryNow = summaryPending &&
+      (diagCount == 0 || diagnosticRecordsSinceSummary >= DIAGNOSTICS_PER_SUMMARY);
+
+  if (sendSummaryNow) {
+    strncpy(txLine, summaryLine, sizeof(txLine) - 1);
+    txLine[sizeof(txLine) - 1] = '\0';
+    txLength = (uint16_t)strlen(txLine);
+    txOffset = 0;
+    summaryPending = false;
+    diagnosticRecordsSinceSummary = 0;
+    return;
+  }
+
+  if (diagCount > 0) {
+    DiagnosticSample d = diagQueue[diagTail];
+    diagTail = (diagTail + 1) % DIAG_QUEUE_SIZE;
+    --diagCount;
+    char f[9][14];
+    dtostrf(d.rawGyroY, 0, 3, f[0]);
+    dtostrf(d.gyroBias, 0, 3, f[1]);
+    dtostrf(d.pitchRate, 0, 3, f[2]);
+    dtostrf(d.accelPitch, 0, 3, f[3]);
+    dtostrf(d.pitch, 0, 3, f[4]);
+    dtostrf(d.pTerm, 0, 3, f[5]);
+    dtostrf(d.dTerm, 0, 3, f[6]);
+    dtostrf(d.unsaturatedOutput, 0, 3, f[7]);
+    dtostrf(d.controllerOutput, 0, 3, f[8]);
+    int n = snprintf(txLine, sizeof(txLine),
+      "D,%lu,%lu,%lu,%s,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%u,%u,%u,%lu,%lu,%u,%lu\n",
+      (unsigned long)d.sequence, (unsigned long)d.timestampUs,
+      (unsigned long)d.dtUs, f[0], f[1], f[2], f[3], f[4], f[5], f[6],
+      f[7], f[8], d.targetMotor, d.leftMotor, d.rightMotor,
+      d.balanceEnabled, d.faultCode, d.imuUpdatesInWindow,
+      (unsigned long)diagQueueDrops, (unsigned long)d.totalIMUUpdates,
+      d.imuUpdatesSinceDiagnostic, (unsigned long)d.diagnosticIntervalUs);
+    if (n > 0 && n < (int)sizeof(txLine)) {
+      txLength = (uint16_t)n;
+      txOffset = 0;
+      ++diagnosticRecordsSinceSummary;
+    }
+    return;
+  }
+
+  if (summaryPending) {
+    strncpy(txLine, summaryLine, sizeof(txLine) - 1);
+    txLine[sizeof(txLine) - 1] = '\0';
+    txLength = (uint16_t)strlen(txLine);
+    txOffset = 0;
+    summaryPending = false;
+    diagnosticRecordsSinceSummary = 0;
+  }
+}
+
+void serviceDiagnosticSerial() {
+  prepareNextTransmitLine();
+  if (txLength == 0) return;
+  int available = Serial.availableForWrite();
+  if (available <= 0) return;
+  uint16_t remaining = txLength - txOffset;
+  uint16_t chunk = (remaining < (uint16_t)available) ? remaining : (uint16_t)available;
+  size_t written = Serial.write((const uint8_t *)(txLine + txOffset), chunk);
+  txOffset += (uint16_t)written;
+  if (txOffset >= txLength) { txLength = 0; txOffset = 0; }
 }
 
 uint8_t readLeftState() {
@@ -366,7 +511,6 @@ bool updateIMU(float &pitch, float &pitchRate, float &rawGyroY, float &accelPitc
   float az = imu.accZ();
   accelPitch = atan2(-ax, az) * 180.0f / PI;
   rawGyroY = imu.gyrY();
-  updateGyroStats(rawGyroY);
   pitchRate = -(rawGyroY - gyroYBias);
 
   if (fabs(pitchRate) >= MAX_PITCH_RATE) {
@@ -374,18 +518,15 @@ bool updateIMU(float &pitch, float &pitchRate, float &rawGyroY, float &accelPitc
     balanceFault = true;
     faultCode = 2;
     stopMotors();
-    Serial.println();
-    Serial.println(F("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
-    Serial.println(F("BALANCE FAULT: PITCH RATE LIMIT EXCEEDED"));
-    Serial.print(F("Raw gyro Y: ")); Serial.println(rawGyroY, 2);
-    Serial.print(F("Pitch rate: ")); Serial.println(pitchRate, 2);
-    Serial.println(F("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
     return false;
   }
 
-  unsigned long now = micros();
-  float dt = (now - lastIMUTime) / 1000000.0f;
-  lastIMUTime = now;
+  // Match the previous controller's timing point: timestamp after sensor reads.
+  currentIMUTimestampUs = micros();
+  uint32_t dtUs = currentIMUTimestampUs - lastIMUTime;
+  currentIMUDtUs = dtUs;
+  lastIMUTime = currentIMUTimestampUs;
+  float dt = dtUs / 1000000.0f;
   if (dt <= 0.0f || dt > 0.1f) return false;
   float gyroPitch = filteredPitch + pitchRate * dt;
   filteredPitch = ALPHA * gyroPitch + (1.0f - ALPHA) * accelPitch;
@@ -437,14 +578,13 @@ void setup() {
   Serial.println(F("IMU initialized."));
   calibrateGyro();
   lastIMUTime = micros();
-  resetGyroStats();
   previousVelocitySampleMs = millis();
-  lastTelemetryTime = millis();
+  lastSummaryTime = millis();
 
-  Serial.println(F("BALANCE CONTROLLER READY"));
-  Serial.println(F("Hold robot upright. Balance auto-enables within +/-5 degrees."));
-  Serial.println(F("Wheel velocity is telemetry ONLY; not used in control."));
-  Serial.println(F("time_ms,pitch_deg,pitch_rate_dps,raw_gyro_y,gyro_min,gyro_max,gyro_avg,gyro_range,accel_pitch_deg,controller_output,target_motor,left_motor,right_motor,balance_enabled,balance_fault,fault_code,left_signed_transitions,right_signed_transitions,left_valid,left_invalid,right_valid,right_invalid,left_period_us,right_period_us,left_rpm_period,right_rpm_period,left_rpm_filtered,right_rpm_filtered,left_velocity_filtered_mps,right_velocity_filtered_mps,left_velocity_mode,right_velocity_mode,left_transition_age_ms,right_transition_age_ms"));
+  Serial.println(F("R2_DIAGNOSTIC_V4"));
+  Serial.println(F("D,seq,timestamp_us,dt_us,raw_gyro_y_dps,gyro_bias_dps,pitch_rate_dps,accel_pitch_deg,fused_pitch_deg,p_term,d_term,unsaturated_output,controller_output,target_motor,left_motor,right_motor,balance_enabled,fault_code,imu_updates_window,queue_drops,imu_total,imu_updates_since_diag,diag_interval_us"));
+  Serial.println(F("T,time_ms,imu_updates_window,left_signed,right_signed,left_valid,left_invalid,right_valid,right_invalid,left_period_us,right_period_us,left_rpm_period,right_rpm_period,left_rpm_filtered,right_rpm_filtered,left_velocity_mps,right_velocity_mps,left_mode,right_mode,left_age_ms,right_age_ms,diag_queue_drops,summary_drops"));
+  Serial.println(F("Balance control unchanged; diagnostics every 3rd IMU update; Hall summary forced after at most 10 D records; velocity telemetry only."));
 }
 
 void loop() {
@@ -452,101 +592,94 @@ void loop() {
   float pitchRate = 0.0f;
   float rawGyroY = 0.0f;
   float accelPitch = 0.0f;
-  if (!updateIMU(pitch, pitchRate, rawGyroY, accelPitch)) return;
+  bool gotIMU = updateIMU(pitch, pitchRate, rawGyroY, accelPitch);
 
-  if (!balanceEnabled && !balanceFault && fabs(pitch) <= STARTUP_ANGLE) {
-    balanceEnabled = true;
-    Serial.println(F("BALANCE ENABLED"));
-  }
+  if (gotIMU) {
+    ++imuUpdatesInWindow;
+    ++totalIMUUpdates;
+    ++imuUpdatesSinceDiagnostic;
+    if (!balanceEnabled && !balanceFault && fabs(pitch) <= STARTUP_ANGLE) {
+      balanceEnabled = true;
+    }
 
-  if (balanceEnabled && fabs(pitch) >= ABORT_ANGLE) {
-    balanceFault = true;
-    balanceEnabled = false;
-    faultCode = 1;
+    if (balanceEnabled && fabs(pitch) >= ABORT_ANGLE) {
+      balanceFault = true;
+      balanceEnabled = false;
+      faultCode = 1;
+      stopMotors();
+    }
+
+    float controllerOutput = 0.0f;
+    int targetMotor = 0;
+    currentPTerm = 0.0f;
+    currentDTerm = 0.0f;
+    currentUnsaturatedOutput = 0.0f;
+    if (balanceEnabled && !balanceFault) {
+      currentPTerm = Kp * pitch;
+      currentDTerm = -Kd * pitchRate;
+      currentUnsaturatedOutput = currentPTerm + currentDTerm;
+      controllerOutput = applyMotorDeadband(currentUnsaturatedOutput);
+      controllerOutput = constrain(controllerOutput, -BALANCE_MAX, BALANCE_MAX);
+      targetMotor = (int)controllerOutput;
+    }
+
+    currentLeftMotor = rampMotor(currentLeftMotor, targetMotor);
+    currentRightMotor = rampMotor(currentRightMotor, targetMotor);
+    setMotorLeft(currentLeftMotor);
+    setMotorRight(currentRightMotor);
+
+    // Diagnostic-only decimation. The balance controller above still executes
+    // on every successful IMU update; only serial logging is reduced.
+    ++diagnosticDecimationCounter;
+    if (diagnosticDecimationCounter >= DIAG_DECIMATION) {
+      diagnosticDecimationCounter = 0;
+      diagnosticIntervalUs = (lastDiagnosticEnqueueUs == 0)
+          ? 0 : (uint32_t)(currentIMUTimestampUs - lastDiagnosticEnqueueUs);
+      lastDiagnosticEnqueueUs = currentIMUTimestampUs;
+      enqueueDiagnosticSample(pitch, pitchRate, rawGyroY, accelPitch,
+                              controllerOutput, targetMotor);
+      imuUpdatesSinceDiagnostic = 0;
+    }
+  } else if (balanceFault) {
+    // Keep motors stopped after a latched safety fault.
     stopMotors();
-    Serial.println();
-    Serial.println(F("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
-    Serial.println(F("BALANCE FAULT: ANGLE LIMIT EXCEEDED"));
-    Serial.print(F("Pitch: ")); Serial.println(pitch, 2);
-    Serial.println(F("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
   }
-
-  // UNCHANGED balance controller: wheel velocity is deliberately not used.
-  float controllerOutput = 0.0f;
-  int targetMotor = 0;
-  if (balanceEnabled && !balanceFault) {
-    controllerOutput = (Kp * pitch) - (Kd * pitchRate);
-    controllerOutput = applyMotorDeadband(controllerOutput);
-    controllerOutput = constrain(controllerOutput, -BALANCE_MAX, BALANCE_MAX);
-    targetMotor = (int)controllerOutput;
-  } else {
-    targetMotor = 0;
-  }
-
-  currentLeftMotor = rampMotor(currentLeftMotor, targetMotor);
-  currentRightMotor = rampMotor(currentRightMotor, targetMotor);
-  setMotorLeft(currentLeftMotor);
-  setMotorRight(currentRightMotor);
 
   unsigned long nowMs = millis();
   updateWheelVelocityTelemetry(nowMs);
 
-  if (nowMs - lastTelemetryTime >= TELEMETRY_INTERVAL) {
-    lastTelemetryTime = nowMs;
-    float gyroAvg = 0.0f;
-    float gyroRange = 0.0f;
-    if (gyroSampleCount > 0) {
-      gyroAvg = gyroSum / (float)gyroSampleCount;
-      gyroRange = gyroMax - gyroMin;
-    }
-
+  if (nowMs - lastSummaryTime >= SUMMARY_INTERVAL_MS) {
+    lastSummaryTime = nowMs;
     long lc, rc;
     unsigned long lv, li, rv, ri, lp, rp;
     noInterrupts();
-    lc = leftSignedTransitions;
-    rc = rightSignedTransitions;
-    lv = leftValidTransitions;
-    li = leftInvalidTransitions;
-    rv = rightValidTransitions;
-    ri = rightInvalidTransitions;
-    lp = leftPeriodUs;
-    rp = rightPeriodUs;
+    lc = leftSignedTransitions; rc = rightSignedTransitions;
+    lv = leftValidTransitions; li = leftInvalidTransitions;
+    rv = rightValidTransitions; ri = rightInvalidTransitions;
+    lp = leftPeriodUs; rp = rightPeriodUs;
     interrupts();
 
-    Serial.print(nowMs); Serial.print(',');
-    Serial.print(pitch, 3); Serial.print(',');
-    Serial.print(pitchRate, 3); Serial.print(',');
-    Serial.print(rawGyroY, 3); Serial.print(',');
-    Serial.print(gyroMin, 3); Serial.print(',');
-    Serial.print(gyroMax, 3); Serial.print(',');
-    Serial.print(gyroAvg, 3); Serial.print(',');
-    Serial.print(gyroRange, 3); Serial.print(',');
-    Serial.print(accelPitch, 3); Serial.print(',');
-    Serial.print(controllerOutput, 3); Serial.print(',');
-    Serial.print(targetMotor); Serial.print(',');
-    Serial.print(currentLeftMotor); Serial.print(',');
-    Serial.print(currentRightMotor); Serial.print(',');
-    Serial.print(balanceEnabled ? 1 : 0); Serial.print(',');
-    Serial.print(balanceFault ? 1 : 0); Serial.print(',');
-    Serial.print(faultCode); Serial.print(',');
-    Serial.print(lc); Serial.print(',');
-    Serial.print(rc); Serial.print(',');
-    Serial.print(lv); Serial.print(',');
-    Serial.print(li); Serial.print(',');
-    Serial.print(rv); Serial.print(',');
-    Serial.print(ri); Serial.print(',');
-    Serial.print(lp); Serial.print(',');
-    Serial.print(rp); Serial.print(',');
-    Serial.print(leftRpmPeriod, 3); Serial.print(',');
-    Serial.print(rightRpmPeriod, 3); Serial.print(',');
-    Serial.print(leftRpmFiltered, 3); Serial.print(',');
-    Serial.print(rightRpmFiltered, 3); Serial.print(',');
-    Serial.print(leftVelocityFiltered, 4); Serial.print(',');
-    Serial.print(rightVelocityFiltered, 4); Serial.print(',');
-    Serial.print(leftVelocityMode); Serial.print(',');
-    Serial.print(rightVelocityMode); Serial.print(',');
-    Serial.print(leftTransitionAgeMs); Serial.print(',');
-    Serial.println(rightTransitionAgeMs);
-    resetGyroStats();
+    if (!summaryPending) {
+      char tf[6][14];
+      dtostrf(leftRpmPeriod, 0, 3, tf[0]);
+      dtostrf(rightRpmPeriod, 0, 3, tf[1]);
+      dtostrf(leftRpmFiltered, 0, 3, tf[2]);
+      dtostrf(rightRpmFiltered, 0, 3, tf[3]);
+      dtostrf(leftVelocityFiltered, 0, 4, tf[4]);
+      dtostrf(rightVelocityFiltered, 0, 4, tf[5]);
+      int n = snprintf(summaryLine, sizeof(summaryLine),
+        "T,%lu,%u,%ld,%ld,%lu,%lu,%lu,%lu,%lu,%lu,%s,%s,%s,%s,%s,%s,%u,%u,%lu,%lu,%lu,%lu\n",
+        nowMs, imuUpdatesInWindow, lc, rc, lv, li, rv, ri, lp, rp,
+        tf[0], tf[1], tf[2], tf[3], tf[4], tf[5], leftVelocityMode,
+        rightVelocityMode, leftTransitionAgeMs, rightTransitionAgeMs,
+        (unsigned long)diagQueueDrops, (unsigned long)summaryDrops);
+      if (n > 0 && n < (int)sizeof(summaryLine)) summaryPending = true;
+    } else {
+      ++summaryDrops;
+    }
+    imuUpdatesInWindow = 0;
   }
+
+  serviceDiagnosticSerial();
 }
+

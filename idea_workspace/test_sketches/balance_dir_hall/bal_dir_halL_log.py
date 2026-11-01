@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""CSV logger for r2_balance_velocity_telemetry.ino (34 Arduino fields)."""
+"""Logger for R2 high-resolution IMU/balance diagnostics V4.
+
+Reads D (every third IMU update) and T (250 ms Hall/velocity summary) CSV records.
+V4 D records add cumulative IMU count, updates since the prior D record,
+and elapsed time between D records. No commands are sent to the robot.
+"""
+import argparse
 import csv
 import sys
 import threading
@@ -10,117 +16,117 @@ from pathlib import Path
 import serial
 from serial.tools import list_ports
 
-DEFAULT_PORT = "/dev/ttyACM0"
-BAUD = 115200
-FIELDS = [
-    "host_time", "time_ms", "pitch_deg", "pitch_rate_dps", "raw_gyro_y",
-    "gyro_min", "gyro_max", "gyro_avg", "gyro_range", "accel_pitch_deg",
-    "controller_output", "target_motor", "left_motor", "right_motor",
-    "balance_enabled", "balance_fault", "fault_code",
-    "left_signed_transitions", "right_signed_transitions",
+D_FIELDS = [
+    "record", "seq", "timestamp_us", "dt_us", "raw_gyro_y_dps",
+    "gyro_bias_dps", "pitch_rate_dps", "accel_pitch_deg", "fused_pitch_deg",
+    "p_term", "d_term", "unsaturated_output", "controller_output",
+    "target_motor", "left_motor", "right_motor", "balance_enabled",
+    "fault_code", "imu_updates_window", "queue_drops", "imu_total",
+    "imu_updates_since_diag", "diag_interval_us",
+]
+T_FIELDS = [
+    "record", "time_ms", "imu_updates_window", "left_signed", "right_signed",
     "left_valid", "left_invalid", "right_valid", "right_invalid",
     "left_period_us", "right_period_us", "left_rpm_period", "right_rpm_period",
-    "left_rpm_filtered", "right_rpm_filtered",
-    "left_velocity_filtered_mps", "right_velocity_filtered_mps",
-    "left_velocity_mode", "right_velocity_mode",
-    "left_transition_age_ms", "right_transition_age_ms",
+    "left_rpm_filtered", "right_rpm_filtered", "left_velocity_mps",
+    "right_velocity_mps", "left_mode", "right_mode", "left_age_ms",
+    "right_age_ms", "diag_queue_drops", "summary_drops",
 ]
-ARDUINO_FIELDS = FIELDS[1:]
-INT_FIELDS = {
-    "time_ms", "target_motor", "left_motor", "right_motor", "balance_enabled",
-    "balance_fault", "fault_code", "left_signed_transitions", "right_signed_transitions",
-    "left_valid", "left_invalid", "right_valid", "right_invalid",
-    "left_period_us", "right_period_us", "left_velocity_mode", "right_velocity_mode",
-    "left_transition_age_ms", "right_transition_age_ms",
-}
-stop_reader = threading.Event()
-print_lock = threading.Lock()
 
 
 def main():
-    port = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_PORT
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("port", nargs="?", default="/dev/ttyACM0")
+    parser.add_argument("--baud", type=int, default=115200,
+                        help="USB CDC baud setting (default: 115200)")
+    args = parser.parse_args()
+
     ports = list(list_ports.comports())
     if ports:
         print("Detected serial ports:")
         for p in ports:
             print(f"  {p.device}: {p.description}")
-    print(f"Opening {port} at {BAUD} baud. Close other serial monitors first.")
+    print(f"Opening {args.port} at {args.baud}. Close Arduino Serial Monitor first.")
     try:
-        ser = serial.Serial(port, BAUD, timeout=0.2, write_timeout=1)
+        ser = serial.Serial(args.port, args.baud, timeout=0.2)
     except serial.SerialException as exc:
-        print(f"Could not open serial port: {exc}")
+        print(f"Could not open serial port: {exc}", file=sys.stderr)
         return 1
 
-    time.sleep(2.0)  # Leonardo may reset when serial port opens.
+    time.sleep(2.0)  # Leonardo may reset when the USB serial port opens.
     ser.reset_input_buffer()
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    path = Path(f"r2_balance_velocity_{stamp}.csv")
-    f = path.open("w", newline="", buffering=1)
-    writer = csv.DictWriter(f, fieldnames=FIELDS)
-    writer.writeheader()
-    counts = {"telemetry": 0, "other": 0, "malformed": 0}
+    d_path = Path(f"r2_imu_highres_{stamp}.csv")
+    t_path = Path(f"r2_hall_summary_{stamp}.csv")
+    stop = threading.Event()
+    counts = {"D": 0, "T": 0, "bad": 0, "other": 0}
+    last_seq = None
+    sequence_gaps = 0
+    last_reported_queue_drops = 0
+    lock = threading.Lock()
 
-    def reader():
-        while not stop_reader.is_set():
-            try:
+    # Use substantial file buffers so per-record disk flushes do not slow serial intake.
+    with d_path.open("w", newline="", buffering=1024 * 1024) as df, \
+         t_path.open("w", newline="", buffering=256 * 1024) as tf:
+        dw = csv.DictWriter(df, fieldnames=D_FIELDS)
+        tw = csv.DictWriter(tf, fieldnames=T_FIELDS)
+        dw.writeheader()
+        tw.writeheader()
+
+        print(f"High-resolution IMU log: {d_path.resolve()}")
+        print(f"Hall summary log:        {t_path.resolve()}")
+        print("Press Ctrl+C to stop recording. This logger sends no motor commands.")
+        try:
+            while not stop.is_set():
                 raw = ser.readline()
-            except serial.SerialException as exc:
-                with print_lock:
-                    print(f"\nSerial read error: {exc}")
-                stop_reader.set()
-                return
-            if not raw:
-                continue
-            line = raw.decode("utf-8", errors="replace").strip()
-            if not line:
-                continue
-            parts = line.split(",")
-            if len(parts) != len(ARDUINO_FIELDS):
-                counts["other"] += 1
-                with print_lock:
-                    print(f"Arduino: {line}")
-                continue
-            try:
-                values = [float(x.strip()) for x in parts]
-                row = {"host_time": datetime.now().isoformat(timespec="milliseconds")}
-                for key, value in zip(ARDUINO_FIELDS, values):
-                    row[key] = int(value) if key in INT_FIELDS else value
-            except ValueError:
-                counts["malformed"] += 1
-                with print_lock:
-                    print(f"Unparsed line: {line}")
-                continue
-            writer.writerow(row)
-            counts["telemetry"] += 1
-            with print_lock:
-                print(
-                    f"t={row['time_ms']:8d} ms | pitch={row['pitch_deg']:7.2f} deg | "
-                    f"rate={row['pitch_rate_dps']:7.2f} deg/s | "
-                    f"motor L/R={row['left_motor']:3d}/{row['right_motor']:3d} | "
-                    f"velocity filt L/R={row['left_velocity_filtered_mps']:+.3f}/"
-                    f"{row['right_velocity_filtered_mps']:+.3f} m/s | "
-                    f"RPM L/R={row['left_rpm_filtered']:+.1f}/{row['right_rpm_filtered']:+.1f} | "
-                    f"mode L/R={row['left_velocity_mode']}/{row['right_velocity_mode']} | "
-                    f"balance={row['balance_enabled']} fault={row['balance_fault']}"
-                )
-
-    thread = threading.Thread(target=reader, daemon=True)
-    thread.start()
-    print(f"\nRecording balance telemetry: {path.resolve()}")
-    print("This logger is read-only; it sends no motor commands.")
-    print("Press Ctrl+C to stop. Keep the robot in your normal safe test setup.")
-    try:
-        while not stop_reader.is_set():
-            time.sleep(0.25)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        stop_reader.set()
-        thread.join(timeout=1.0)
-        f.close()
-        ser.close()
-        print(f"\nSaved: {path.resolve()}")
-        print(f"Parsed telemetry rows: {counts['telemetry']}; other lines: {counts['other']}; malformed rows: {counts['malformed']}")
+                if not raw:
+                    continue
+                line = raw.decode("ascii", errors="replace").strip()
+                if not line:
+                    continue
+                parts = line.split(",")
+                tag = parts[0]
+                try:
+                    if tag == "D" and len(parts) == len(D_FIELDS):
+                        row = dict(zip(D_FIELDS, parts))
+                        dw.writerow(row)
+                        counts["D"] += 1
+                        seq = int(parts[1])
+                        if last_seq is not None and seq > last_seq + 1:
+                            sequence_gaps += seq - last_seq - 1
+                        last_seq = seq
+                        queue_drops = int(parts[19])
+                        last_reported_queue_drops = max(last_reported_queue_drops, queue_drops)
+                        if counts["D"] % 250 == 0:
+                            print(f"Diagnostic records: {counts['D']} | latest dt={parts[3]} us | "
+                                  f"pitch={parts[8]} deg | output={parts[12]} | "
+                                  f"seq gaps={sequence_gaps} | Arduino queue drops={last_reported_queue_drops} | "
+                                  f"IMU total={parts[20]} | updates/D={parts[21]} | "
+                                  f"D interval={parts[22]} us")
+                    elif tag == "T" and len(parts) == len(T_FIELDS):
+                        tw.writerow(dict(zip(T_FIELDS, parts)))
+                        counts["T"] += 1
+                    elif tag in ("D", "T"):
+                        counts["bad"] += 1
+                        print(f"Malformed {tag} record ({len(parts)} fields): {line}")
+                    else:
+                        counts["other"] += 1
+                        print(f"Arduino: {line}")
+                except (ValueError, csv.Error) as exc:
+                    counts["bad"] += 1
+                    print(f"Could not parse record: {exc}: {line}")
+        except KeyboardInterrupt:
+            print("\nStopping logger...")
+        finally:
+            stop.set()
+            ser.close()
+            df.flush()
+            tf.flush()
+            print(f"Saved {counts['D']} diagnostic samples and {counts['T']} Hall summaries.")
+            print(f"Sequence gaps observed: {sequence_gaps}; latest Arduino queue-drop count: {last_reported_queue_drops}")
+            print(f"Malformed records: {counts['bad']}; other lines: {counts['other']}")
+            print(f"IMU CSV:  {d_path.resolve()}")
+            print(f"Hall CSV: {t_path.resolve()}")
     return 0
 
 
