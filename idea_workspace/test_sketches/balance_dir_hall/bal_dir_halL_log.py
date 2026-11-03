@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Logger for R2 high-resolution IMU/balance diagnostics V4.
+"""Logger for R2 high-resolution IMU/balance diagnostics V5 direction-hysteresis.
 
 Reads D (every third IMU update) and T (250 ms Hall/velocity summary) CSV records.
 V4 D records add cumulative IMU count, updates since the prior D record,
@@ -20,8 +20,9 @@ D_FIELDS = [
     "record", "seq", "timestamp_us", "dt_us", "raw_gyro_y_dps",
     "gyro_bias_dps", "pitch_rate_dps", "accel_pitch_deg", "fused_pitch_deg",
     "p_term", "d_term", "unsaturated_output", "controller_output",
-    "target_motor", "left_motor", "right_motor", "balance_enabled",
-    "fault_code", "imu_updates_window", "queue_drops", "imu_total",
+    "target_motor", "selected_direction", "hysteresis_hold", "left_motor",
+    "right_motor", "balance_enabled", "fault_code", "imu_updates_window",
+    "queue_drops", "imu_total",
     "imu_updates_since_diag", "diag_interval_us",
 ]
 T_FIELDS = [
@@ -56,8 +57,8 @@ def main():
     time.sleep(2.0)  # Leonardo may reset when the USB serial port opens.
     ser.reset_input_buffer()
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    d_path = Path(f"r2_imu_highres_{stamp}.csv")
-    t_path = Path(f"r2_hall_summary_{stamp}.csv")
+    d_path = Path(f"r2_imu_hysteresis_{stamp}.csv")
+    t_path = Path(f"r2_hall_hysteresis_{stamp}.csv")
     stop = threading.Event()
     counts = {"D": 0, "T": 0, "bad": 0, "other": 0}
     last_seq = None
@@ -95,14 +96,14 @@ def main():
                         if last_seq is not None and seq > last_seq + 1:
                             sequence_gaps += seq - last_seq - 1
                         last_seq = seq
-                        queue_drops = int(parts[19])
+                        queue_drops = int(parts[21])
                         last_reported_queue_drops = max(last_reported_queue_drops, queue_drops)
                         if counts["D"] % 250 == 0:
                             print(f"Diagnostic records: {counts['D']} | latest dt={parts[3]} us | "
-                                  f"pitch={parts[8]} deg | output={parts[12]} | "
+                                  f"pitch={parts[8]} deg | output={parts[12]} | dir={parts[14]} | hold={parts[15]} | "
                                   f"seq gaps={sequence_gaps} | Arduino queue drops={last_reported_queue_drops} | "
-                                  f"IMU total={parts[20]} | updates/D={parts[21]} | "
-                                  f"D interval={parts[22]} us")
+                                  f"IMU total={parts[22]} | updates/D={parts[23]} | "
+                                  f"D interval={parts[24]} us")
                     elif tag == "T" and len(parts) == len(T_FIELDS):
                         tw.writerow(dict(zip(T_FIELDS, parts)))
                         counts["T"] += 1

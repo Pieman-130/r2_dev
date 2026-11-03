@@ -1,11 +1,12 @@
 /*
-  R2 balance controller with Hall-derived wheel velocity telemetry — V4 diagnostics
+  R2 balance controller with Hall telemetry and direction hysteresis — V5
   Board: Arduino Leonardo / ATmega32U4
 
   IMPORTANT:
-  - Balance control law, gains, limits, ramp, deadband, IMU filter,
-    calibration and safety thresholds are preserved from the prior
-    r2_balance_with_encoders.ino baseline.
+  - PID gains, IMU filter, calibration, deadband compensation, PWM limits,
+    and safety thresholds are unchanged from V4.
+  - Adds a 2.0-output-unit direction hysteresis band and a zero-crossing
+    ramp interlock to prevent direct positive-to-negative motor command steps.
   - Wheel velocity is telemetry ONLY. It is not used by the controller.
   - Hall decoding follows the validated period-preferred estimator.
 
@@ -49,6 +50,12 @@ const int MOTOR_DEADBAND = 8;
 
 int currentLeftMotor = 0;
 int currentRightMotor = 0;
+
+// Direction-selection hysteresis applies to the raw PID output, before deadband.
+// A reversal is accepted only after the raw output reaches the opposite threshold.
+const float DIRECTION_HYSTERESIS = 2.0f; // controller-output / PWM-equivalent units
+int8_t selectedMotorDirection = 0;       // -1 reverse, 0 not selected, +1 forward
+bool currentHysteresisHold = false;
 
 float Kp = 2.0f;
 float Kd = 0.30f;
@@ -212,6 +219,8 @@ struct DiagnosticSample {
   float unsaturatedOutput;
   float controllerOutput;
   int16_t targetMotor;
+  int8_t selectedDirection;
+  uint8_t hysteresisHold;
   int16_t leftMotor;
   int16_t rightMotor;
   uint8_t balanceEnabled;
@@ -248,7 +257,8 @@ uint16_t txOffset = 0;
 
 void enqueueDiagnosticSample(float pitch, float pitchRate, float rawGyroY,
                              float accelPitch, float controllerOutput,
-                             int targetMotor) {
+                             int targetMotor, int selectedDirection,
+                             bool hysteresisHold) {
   ++diagSequence; // Sequence gaps reveal samples dropped when the queue is full.
   if (diagCount >= DIAG_QUEUE_SIZE) {
     ++diagQueueDrops;
@@ -268,6 +278,8 @@ void enqueueDiagnosticSample(float pitch, float pitchRate, float rawGyroY,
   d.unsaturatedOutput = currentUnsaturatedOutput;
   d.controllerOutput = controllerOutput;
   d.targetMotor = targetMotor;
+  d.selectedDirection = (int8_t)selectedDirection;
+  d.hysteresisHold = hysteresisHold ? 1 : 0;
   d.leftMotor = currentLeftMotor;
   d.rightMotor = currentRightMotor;
   d.balanceEnabled = balanceEnabled ? 1 : 0;
@@ -313,13 +325,14 @@ void prepareNextTransmitLine() {
     dtostrf(d.unsaturatedOutput, 0, 3, f[7]);
     dtostrf(d.controllerOutput, 0, 3, f[8]);
     int n = snprintf(txLine, sizeof(txLine),
-      "D,%lu,%lu,%lu,%s,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%d,%u,%u,%u,%lu,%lu,%u,%lu\n",
+      "D,%lu,%lu,%lu,%s,%s,%s,%s,%s,%s,%s,%s,%s,%d,%d,%u,%d,%d,%u,%u,%u,%lu,%lu,%u,%lu\n",
       (unsigned long)d.sequence, (unsigned long)d.timestampUs,
       (unsigned long)d.dtUs, f[0], f[1], f[2], f[3], f[4], f[5], f[6],
-      f[7], f[8], d.targetMotor, d.leftMotor, d.rightMotor,
-      d.balanceEnabled, d.faultCode, d.imuUpdatesInWindow,
-      (unsigned long)diagQueueDrops, (unsigned long)d.totalIMUUpdates,
-      d.imuUpdatesSinceDiagnostic, (unsigned long)d.diagnosticIntervalUs);
+      f[7], f[8], d.targetMotor, d.selectedDirection, d.hysteresisHold,
+      d.leftMotor, d.rightMotor, d.balanceEnabled, d.faultCode,
+      d.imuUpdatesInWindow, (unsigned long)diagQueueDrops,
+      (unsigned long)d.totalIMUUpdates, d.imuUpdatesSinceDiagnostic,
+      (unsigned long)d.diagnosticIntervalUs);
     if (n > 0 && n < (int)sizeof(txLine)) {
       txLength = (uint16_t)n;
       txOffset = 0;
@@ -463,11 +476,18 @@ void setMotorRight(int command) {
 void stopMotors() {
   currentLeftMotor = 0;
   currentRightMotor = 0;
+  selectedMotorDirection = 0;
+  currentHysteresisHold = false;
   analogWrite(LEFT_PWM_PIN, 0);
   analogWrite(RIGHT_PWM_PIN, 0);
 }
 
 int rampMotor(int current, int target) {
+  // Never cross directly through zero in one ramp step when reversing.
+  // First ramp to zero; the opposite direction can begin on the next update.
+  if ((current > 0 && target < 0) || (current < 0 && target > 0)) {
+    target = 0;
+  }
   if (current < target) {
     current += PWM_STEP;
     if (current > target) current = target;
@@ -482,6 +502,42 @@ float applyMotorDeadband(float output) {
   if (output > 0.0f) output += MOTOR_DEADBAND;
   else if (output < 0.0f) output -= MOTOR_DEADBAND;
   return output;
+}
+
+// Suppress small opposite-sign requests instead of immediately reversing.
+// While an opposite request is inside the hysteresis band, command zero so
+// the existing motor ramp can bring the wheel to a stop before reversal.
+float applyDirectionHysteresis(float rawOutput) {
+  currentHysteresisHold = false;
+
+  if (selectedMotorDirection == 0) {
+    if (rawOutput >= DIRECTION_HYSTERESIS) {
+      selectedMotorDirection = 1;
+    } else if (rawOutput <= -DIRECTION_HYSTERESIS) {
+      selectedMotorDirection = -1;
+    } else {
+      currentHysteresisHold = true;
+      return 0.0f;
+    }
+  } else if (selectedMotorDirection > 0) {
+    if (rawOutput <= -DIRECTION_HYSTERESIS) {
+      selectedMotorDirection = -1;
+    } else if (rawOutput < 0.0f) {
+      currentHysteresisHold = true;
+      return 0.0f;
+    }
+  } else { // selectedMotorDirection < 0
+    if (rawOutput >= DIRECTION_HYSTERESIS) {
+      selectedMotorDirection = 1;
+    } else if (rawOutput > 0.0f) {
+      currentHysteresisHold = true;
+      return 0.0f;
+    }
+  }
+
+  // Do not apply deadband to zero; same-direction requests retain V4 behavior.
+  if (rawOutput == 0.0f) return 0.0f;
+  return applyMotorDeadband(rawOutput);
 }
 
 void calibrateGyro() {
@@ -581,10 +637,9 @@ void setup() {
   previousVelocitySampleMs = millis();
   lastSummaryTime = millis();
 
-  Serial.println(F("R2_DIAGNOSTIC_V4"));
-  Serial.println(F("D,seq,timestamp_us,dt_us,raw_gyro_y_dps,gyro_bias_dps,pitch_rate_dps,accel_pitch_deg,fused_pitch_deg,p_term,d_term,unsaturated_output,controller_output,target_motor,left_motor,right_motor,balance_enabled,fault_code,imu_updates_window,queue_drops,imu_total,imu_updates_since_diag,diag_interval_us"));
+  Serial.println(F("R2_V5"));
+  Serial.println(F("D,seq,timestamp_us,dt_us,raw_gyro_y_dps,gyro_bias_dps,pitch_rate_dps,accel_pitch_deg,fused_pitch_deg,p_term,d_term,unsaturated_output,controller_output,target_motor,selected_direction,hysteresis_hold,left_motor,right_motor,balance_enabled,fault_code,imu_updates_window,queue_drops,imu_total,imu_updates_since_diag,diag_interval_us"));
   Serial.println(F("T,time_ms,imu_updates_window,left_signed,right_signed,left_valid,left_invalid,right_valid,right_invalid,left_period_us,right_period_us,left_rpm_period,right_rpm_period,left_rpm_filtered,right_rpm_filtered,left_velocity_mps,right_velocity_mps,left_mode,right_mode,left_age_ms,right_age_ms,diag_queue_drops,summary_drops"));
-  Serial.println(F("Balance control unchanged; diagnostics every 3rd IMU update; Hall summary forced after at most 10 D records; velocity telemetry only."));
 }
 
 void loop() {
@@ -618,9 +673,12 @@ void loop() {
       currentPTerm = Kp * pitch;
       currentDTerm = -Kd * pitchRate;
       currentUnsaturatedOutput = currentPTerm + currentDTerm;
-      controllerOutput = applyMotorDeadband(currentUnsaturatedOutput);
+      controllerOutput = applyDirectionHysteresis(currentUnsaturatedOutput);
       controllerOutput = constrain(controllerOutput, -BALANCE_MAX, BALANCE_MAX);
       targetMotor = (int)controllerOutput;
+    } else {
+      selectedMotorDirection = 0;
+      currentHysteresisHold = false;
     }
 
     currentLeftMotor = rampMotor(currentLeftMotor, targetMotor);
@@ -637,7 +695,8 @@ void loop() {
           ? 0 : (uint32_t)(currentIMUTimestampUs - lastDiagnosticEnqueueUs);
       lastDiagnosticEnqueueUs = currentIMUTimestampUs;
       enqueueDiagnosticSample(pitch, pitchRate, rawGyroY, accelPitch,
-                              controllerOutput, targetMotor);
+                              controllerOutput, targetMotor,
+                              selectedMotorDirection, currentHysteresisHold);
       imuUpdatesSinceDiagnostic = 0;
     }
   } else if (balanceFault) {
@@ -682,4 +741,3 @@ void loop() {
 
   serviceDiagnosticSerial();
 }
-
