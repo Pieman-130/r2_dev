@@ -57,7 +57,7 @@ const float DIRECTION_HYSTERESIS = 2.0f; // controller-output / PWM-equivalent u
 int8_t selectedMotorDirection = 0;       // -1 reverse, 0 not selected, +1 forward
 bool currentHysteresisHold = false;
 
-float Kp = 2.0f;
+float Kp = 2.2f;
 float Kd = 0.30f;
 float Ki = 0.0f; // No integral term; retained from baseline.
 
